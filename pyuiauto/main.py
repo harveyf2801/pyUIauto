@@ -5,75 +5,47 @@ from platform import system
 # import os, sys
 # import argparse
 
-class FrameworkCreator(ABC):
-    @staticmethod
-    def build_framework() -> Framework:
-        if system() == "Darwin":
-            # pip installed modules
-            try:
-                    import atomacos
-            except ImportError: # requires pip install
-                    raise ModuleNotFoundError('To install the required modules use pip install atomacos (Mac ONLY)')
+# class FrameworkCreator(ABC):
+#     @staticmethod
+#     def build_framework() -> Framework:
+#         if system() == "Darwin":
+#             # pip installed modules
+#             try:
+#                     import atomacos
+#             except ImportError: # requires pip install
+#                     raise ModuleNotFoundError('To install the required modules use pip install atomacos (Mac ONLY)')
             
-            return UIApplication()
+#             return UIApplication()
         
-        elif system() == "Windows":
-            # pip installed modules
-            try:
-                    import pywinauto
-            except ImportError: # requires pip install
-                    raise ModuleNotFoundError('To install the required modules use pip install pywinauto (Windows ONLY)')
+#         elif system() == "Windows":
+#             # pip installed modules
+#             try:
+#                     import pywinauto
+#             except ImportError: # requires pip install
+#                     raise ModuleNotFoundError('To install the required modules use pip install pywinauto (Windows ONLY)')
             
-            return UIApplication()
-        else:
-            raise OSError("The current OS isn't supported with this framework")
-
-mseedfile = 'example_2020-05-01_IN.RAGD..BHZ.mseed'
-
-info_string = '''
-Python utility program to convert mseed file to mat (by Utpal Kumar, IESAS, 2021/04)
-'''
-
-PARSER = argparse.ArgumentParser(description=info_string)
-
-def main(args):
-    mseedfile = args.input_mseed
-    st = read(mseedfile)
-
-    filename, _ = os.path.splitext(mseedfile)
-    if not args.output_mat:
-        outfilename = filename +".mat"
-    else:
-        outfilename = args.output_mat
-
-    outdict = {}
+#             return UIApplication()
+#         else:
+#             raise OSError("The current OS isn't supported with this framework")
 
 
-    # st.plot(outfile=f"{filename}.png")
+def main():
+
+    from pyuiauto.src.mac.application import UIApplication
+    import time
+
+    app = UIApplication("EVO", "/Applications/EVO.app")
+
+    app.launchApp()
+    app.connectApp()
+    app.windows()
     
-    outdict['stats'] = {}
-    outdict['data'] = {}
-    
-    for ii,tr in enumerate(st):
-        outdict['stats'][f'stats_{ii}'] = {}
-        for val in tr.stats:
-            if val in ['starttime', 'endtime']:
-                outdict['stats'][f'stats_{ii}'][val] = str(tr.stats[val])
-            else:
-                outdict['stats'][f'stats_{ii}'][val] = tr.stats[val]
-        outdict['data'][f"data_{ii}"] = tr.data
-    
-        
-    # print(outdict)
-    sio.savemat(
-        outfilename, outdict
-    )
-    sys.stdout.write(f"Output file: {outfilename}\n")
+    time.sleep(2)
+
+    app.terminateApp()
+
+
 
 if __name__ == '__main__':
-    PARSER.add_argument("-inp",'--input_mseed', type=str, help="input mseed file, e.g. example_2020-05-01_IN.RAGD..BHZ.mseed", required=True)
-    PARSER.add_argument("-out",'--output_mat', type=str, help="output mat file name, e.g. example_2020-05-01_IN.RAGD..BHZ.mat")
     
-
-    args = PARSER.parse_args()
-    main(args)
+    main()

@@ -1,3 +1,6 @@
+# __MY_MODULES__
+from pyuiauto.src.components import UIWindowWrapper
+
 # ___MODULES___
 from abc import ABC, abstractmethod
 

@@ -6,6 +6,8 @@ authors = ["harveyf2801 <47286380+harveyf2801@users.noreply.github.com>"]
 
 [tool.poetry.dependencies]
 python = "^3.9"
+atomacos = {git = "https://github.com/daveenguyen/atomacos.git", platform = "darwin"}
+pywinauto = {version = "^0.6.8", platform = "win32"}
 
 [tool.poetry.dev-dependencies]
 pytest = "^5.2"

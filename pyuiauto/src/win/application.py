@@ -1,6 +1,6 @@
 #___MY_MODULES___
-from src.drivers.appautomation.cross_automation_component import UIWindowWrapper, UIMenuItemWrapper
-from src.drivers.appautomation.cross_automation_exceptions import UIElementNotFoundError, UIWindowNotFoundError
+from pyuiauto.src.drivers.appautomation.cross_automation_component import UIWindowWrapper, UIMenuItemWrapper
+from pyuiauto.src.drivers.appautomation.cross_automation_exceptions import UIElementNotFoundError, UIWindowNotFoundError
 
 #___MODULES___
 from typing import Type
