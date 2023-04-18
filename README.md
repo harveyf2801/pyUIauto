@@ -28,7 +28,7 @@ OS Compatibility:
 
 Opening a folder in Visual Studio Code using the python automation library:
 
-```
+```python
 # Import the tools needed
 from platform import system
 import os
