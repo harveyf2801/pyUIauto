@@ -18,7 +18,7 @@ else:
     raise OSError("The current OS isn't supported with this framework")
 
 from pyuiauto.src.application import UIApplication
-from pyuiauto.src.components import UIButton, UIWindow
+from pyuiauto.src.components import UIButton, UIWindow, UISlider
 
 
 def main():
@@ -33,8 +33,9 @@ def main():
     app.connectApp()
     win = app.window(title="EVO Mixer", timeout=10)
 
-    win.moveResize(0, 0, 100, 100)
-    # win.findAllR(title="Mic 1 polarity", control_type=UIButtonWrapper)
+    # win.moveResize(0, 0, 100, 100)
+    pan = win.findFirstR(title="Mic 1 pan", control_type=UISlider)
+    pan.setValue(0)
     
     app.terminateApp()
 

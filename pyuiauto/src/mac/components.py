@@ -9,7 +9,7 @@ import Quartz.CoreGraphics as CG
 
 #___MY_MODULES___
 from pyuiauto.src.exceptions import ElementNotFound
-from pyuiauto.src.base.components import UIBaseComponentWrapperMeta, UIBaseComponentWrapper, UIButtonWrapper, UIWindowWrapper
+from pyuiauto.src.base.components import *
 
 
 #___DEFINING_NATIVE_WRAPPER_META___
@@ -110,7 +110,6 @@ class UIBaseComponent(UIBaseComponentWrapper, metaclass=UIBaseComponentMeta):
                 if type(item) == list:
                     return list(UIBaseComponent(i) for i in item)
                 else:
-                    print(item)
                     return UIBaseComponent(item)
             time.sleep(retry_interval)
         raise ElementNotFound(f"Element - ControlType: {control_type.native_control_type} - {criteria} - not found after {timeout} seconds")
@@ -224,3 +223,93 @@ class UIWindow(UIBaseComponent, UIWindowWrapper):
 
     def close(self):
         self.component.AXCloseButton.Press()
+
+
+
+
+# ============================================
+
+
+
+
+
+class UIButton(UIBaseComponent, UIButtonWrapper):
+    native_control_type: str = "AXButton"
+    
+    def press(self):
+        self.invoke()
+
+class UIRadioButton(UIBaseComponent, UIRadioButtonWrapper):
+    native_control_type: str = "AXRadioButton"
+
+class UIText(UIBaseComponent, UITextWrapper):
+    native_control_type: str = "AXText"
+
+class UISlider(UIBaseComponent, UISliderWrapper):
+    native_control_type: str = "AXSlider"
+
+class UIEdit(UIBaseComponent, UIEditWrapper):
+    native_control_type: str = "AXTextArea"
+
+class UIMenu(UIBaseComponent, UIMenuWrapper):
+    native_control_type: str = "AXMenu"
+
+class UIMenuItem(UIBaseComponent, UIMenuItemWrapper):
+    native_control_type: str = "AXMenuItem"
+
+    def select(self):
+        self.invoke()
+
+class UIWindow(UIBaseComponent, UIWindowWrapper):
+    native_control_type: str = "AXWindow"
+
+    def moveResize(self, x=None, y=None, width=None, height=None):
+        left, top, _, _ = self.getCoordinates()
+        w, h = self.getSizes()
+
+        # if no X is specified - so use current coordinate
+        if x is None:
+            x = left
+
+        # if no Y is specified - so use current coordinate
+        if y is None:
+            y = top
+
+        # if no width is specified - so use current width
+        if width is None:
+            width = w
+
+        # if no height is specified - so use current height
+        if height is None:
+            height = h
+
+        # ask for the window to be moved
+        point = CG.CGPoint(x=x, y=y)
+        self.component.AXPosition = AXValueCreate(kAXValueCGPointType, point)
+
+        # ask for the window to be resized
+        size = CG.CGSize(width=width, height=height)
+        self.component.AXSize = AXValueCreate(kAXValueCGSizeType, size)
+
+    def close(self):
+        self.component.AXCloseButton.Press()
+
+class UIGroup(UIBaseComponent, UIGroupWrapper):
+    name="AXGroup"
+
+class UIStaticText(UIBaseComponent, UIStaticTextWrapper):
+    name="AXStaticText"
+
+class UITitleBar(UIBaseComponent, UITitleBarWrapper):
+    name="AXTitleBar"
+
+class UIMenuBar(UIBaseComponent, UIMenuBarWrapper):
+    native_control_type: str = "AXMenuBar"
+
+class UIProgressBar(UIBaseComponent):
+    native_control_type: str = "AXProgressIndicator"
+
+# !!! Mac Specific !!!
+
+class UIMenuBarItem(UIBaseComponent, UIMenuItemWrapper):
+    native_control_type: str = "AXMenuBarItem"
