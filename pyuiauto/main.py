@@ -23,8 +23,6 @@ from pyuiauto.src.components import UIButton, UIWindow, UISlider
 
 def main():
 
-
-
     import time
 
     app = UIApplication("EVO", "/Applications/EVO.app")
