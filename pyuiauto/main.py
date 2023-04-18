@@ -1,47 +1,41 @@
-from abc import ABC, abstractmethod
 from platform import system
 
-# import scipy.io as sio
-# import os, sys
-# import argparse
+if system() == "Darwin":
+    # pip installed modules
+    try:
+            import atomacos
+    except ImportError: # requires pip install
+            raise ModuleNotFoundError('To install the required modules use pip install atomacos (Mac ONLY)')
 
-# class FrameworkCreator(ABC):
-#     @staticmethod
-#     def build_framework() -> Framework:
-#         if system() == "Darwin":
-#             # pip installed modules
-#             try:
-#                     import atomacos
-#             except ImportError: # requires pip install
-#                     raise ModuleNotFoundError('To install the required modules use pip install atomacos (Mac ONLY)')
-            
-#             return UIApplication()
-        
-#         elif system() == "Windows":
-#             # pip installed modules
-#             try:
-#                     import pywinauto
-#             except ImportError: # requires pip install
-#                     raise ModuleNotFoundError('To install the required modules use pip install pywinauto (Windows ONLY)')
-            
-#             return UIApplication()
-#         else:
-#             raise OSError("The current OS isn't supported with this framework")
+elif system() == "Windows":
+    # pip installed modules
+    try:
+            import pywinauto
+    except ImportError: # requires pip install
+            raise ModuleNotFoundError('To install the required modules use pip install pywinauto (Windows ONLY)')
+    
+else:
+    raise OSError("The current OS isn't supported with this framework")
+
+from pyuiauto.src.application import UIApplication
+from pyuiauto.src.components import UIButton, UIWindow
 
 
 def main():
 
-    from pyuiauto.src.mac.application import UIApplication
+
+
     import time
 
     app = UIApplication("EVO", "/Applications/EVO.app")
 
     app.launchApp()
     app.connectApp()
-    app.windows()
-    
-    time.sleep(2)
+    win = app.window(title="EVO Mixer", timeout=10)
 
+    win.moveResize(0, 0, 100, 100)
+    # win.findAllR(title="Mic 1 polarity", control_type=UIButtonWrapper)
+    
     app.terminateApp()
 
 

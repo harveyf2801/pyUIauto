@@ -1,16 +1,59 @@
-#___MY_MODULES___
-from pyuiauto.src.exceptions import ElementNotFound
-from pyuiauto.src.components import UIBaseComponentWrapper, UIButtonWrapper
-
 #___MODULES___
+from __future__ import annotations
 from typing import Type
 import time
+from abc import ABCMeta
 
-# from ApplicationServices import AXValueCreate, kAXValueCGPointType, kAXValueCGSizeType
-# import Quartz.CoreGraphics as CG
+from ApplicationServices import AXValueCreate, kAXValueCGPointType, kAXValueCGSizeType
+import Quartz.CoreGraphics as CG
+
+#___MY_MODULES___
+from pyuiauto.src.exceptions import ElementNotFound
+from pyuiauto.src.base.components import UIBaseComponentWrapperMeta, UIBaseComponentWrapper, UIButtonWrapper, UIWindowWrapper
+
+
+#___DEFINING_NATIVE_WRAPPER_META___
+
+class UIBaseComponentMeta(UIBaseComponentWrapperMeta):
+    """Metaclass for UIComponent objects"""
+
+    control_type_to_cls = {}
+
+    def __init__(cls, name, bases, attrs):
+        """Register the control types"""
+
+        UIBaseComponentWrapperMeta.__init__(cls, name, bases, attrs)
+
+        if name != "UIBaseComponent":
+            UIBaseComponentMeta.control_type_to_cls[cls.native_control_type] = cls
+
+    @staticmethod
+    def find_wrapper(component):
+        """Find the correct wrapper for this UIA component"""
+        # Set a general wrapper by default
+        wrapper_match = UIBaseComponent
+
+        # Check for a more specific wrapper in the registry
+
+        if component.AXRole in UIBaseComponentWrapperMeta.control_type_to_cls:
+            wrapper_match = UIBaseComponentWrapperMeta.control_type_to_cls[component.AXRole]
+        else:
+            raise NotImplementedError(f"{component} doesn't have an implemented wrapper")
+
+        return wrapper_match
 
 #___DEFINING_NATIVE_METHODS___
-class UIBaseComponent(UIBaseComponentWrapper):
+
+class UIBaseComponent(UIBaseComponentWrapper, metaclass=UIBaseComponentMeta):
+
+    def __new__(cls, component):
+        """Construct the control wrapper"""
+        return super(UIBaseComponent, cls)._create_wrapper(cls, component, UIBaseComponent)
+
+    # -----------------------------------------------------------
+    def __init__(self, component):
+        UIBaseComponentWrapper.__init__(self, component)
+
     def getValue(self):
         return self.component.AXValue
     
@@ -61,16 +104,20 @@ class UIBaseComponent(UIBaseComponentWrapper):
 
         timeafter = time.time() + timeout
         while time.time() < timeafter:
-            item = function(AXRole=control_type.name, **criteria)
-            item_check = check_function(item, control_type)
+            item = function(AXRole=control_type.native_control_type, **criteria)
+            item_check = check_function(item)
             if item_check:
-                return item_check
+                if type(item) == list:
+                    return list(UIBaseComponent(i) for i in item)
+                else:
+                    print(item)
+                    return UIBaseComponent(item)
             time.sleep(retry_interval)
-        raise ElementNotFound(f"Element - ControlType: {control_type.name} - {criteria} - not found after {timeout} seconds")
+        raise ElementNotFound(f"Element - ControlType: {control_type.native_control_type} - {criteria} - not found after {timeout} seconds")
 
     def findFirst(self, control_type: Type, timeout: int = 1, retry_interval: float = 0.5, **criteria):
         return self._wait_find(function=self.component.findFirst,
-                                check_function=self._wrapper_function,
+                                check_function=self._check_element_exists,
                                 control_type=control_type,
                                 timeout=timeout,
                                 retry_interval = retry_interval,
@@ -78,7 +125,7 @@ class UIBaseComponent(UIBaseComponentWrapper):
 
     def findAll(self, control_type: Type, timeout: int = 1, retry_interval: float = 0.5, **criteria):
         return self._wait_find(function=self.component.findAll,
-                                check_function=self._list_wrapper_function,
+                                check_function=self._check_elements_exist,
                                 control_type=control_type,
                                 timeout=timeout,
                                 retry_interval = retry_interval,
@@ -86,7 +133,7 @@ class UIBaseComponent(UIBaseComponentWrapper):
 
     def findFirstR(self, control_type: Type, timeout: int = 1, retry_interval: float = 0.5, **criteria):
         return self._wait_find(function=self.component.findFirstR,
-                                check_function=self._wrapper_function,
+                                check_function=self._check_element_exists,
                                 control_type=control_type,
                                 timeout=timeout,
                                 retry_interval = retry_interval,
@@ -94,7 +141,7 @@ class UIBaseComponent(UIBaseComponentWrapper):
 
     def findAllR(self, control_type: Type, timeout: int = 1, retry_interval: float = 0.5, **criteria):
         return self._wait_find(function=self.component.findAllR,
-                                check_function=self._list_wrapper_function,
+                                check_function=self._check_elements_exist,
                                 control_type=control_type,
                                 timeout=timeout,
                                 retry_interval = retry_interval,
@@ -123,7 +170,7 @@ class UIBaseComponent(UIBaseComponentWrapper):
     @classmethod
     @property
     def native_control_type(cls) -> str:
-        raise NotImplementedError
+        return None
     
     @classmethod
     @property
@@ -136,7 +183,44 @@ class UIBaseComponent(UIBaseComponentWrapper):
     
 
 class UIButton(UIBaseComponent, UIButtonWrapper):
-    name = "AXButton"
+    native_control_type: str = "AXButton"
     
     def press(self):
         self.invoke()
+
+class UIApplication(UIBaseComponent):
+    native_control_type: str = "AXApplication"
+
+class UIWindow(UIBaseComponent, UIWindowWrapper):
+    native_control_type: str = "AXWindow"
+
+    def moveResize(self, x=None, y=None, width=None, height=None):
+        left, top, _, _ = self.getCoordinates()
+        w, h = self.getSizes()
+
+        # if no X is specified - so use current coordinate
+        if x is None:
+            x = left
+
+        # if no Y is specified - so use current coordinate
+        if y is None:
+            y = top
+
+        # if no width is specified - so use current width
+        if width is None:
+            width = w
+
+        # if no height is specified - so use current height
+        if height is None:
+            height = h
+
+        # ask for the window to be moved
+        point = CG.CGPoint(x=x, y=y)
+        self.component.AXPosition = AXValueCreate(kAXValueCGPointType, point)
+
+        # ask for the window to be resized
+        size = CG.CGSize(width=width, height=height)
+        self.component.AXSize = AXValueCreate(kAXValueCGSizeType, size)
+
+    def close(self):
+        self.component.AXCloseButton.Press()

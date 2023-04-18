@@ -1,6 +1,6 @@
 #___MY_MODULES___
-from pyuiauto.src.components import UIBaseComponentWrapper, UIWindowWrapper
-from pyuiauto.src.application import UIApplicationWrapper
+from pyuiauto.src.mac.components import UIBaseComponent, UIWindow
+from pyuiauto.src.base.application import UIApplicationWrapper
 from pyuiauto.src.exceptions import ElementNotFound, WindowtNotFound
 
 #___MODULES___
@@ -27,47 +27,45 @@ class UIApplication(UIApplicationWrapper):
     def terminateApp(self) -> None:
         atomacos.terminateAppByBundleId(self._bundleID)
     
-    def _findAll(self, control_type: Type[UIBaseComponentWrapper], **options):
-        return UIBaseComponentWrapper(self._app).findAll(
+    def _findAll(self, control_type: Type[UIBaseComponent], **options):
+        return UIBaseComponent(self._app).findAll(
                                                     control_type=control_type,
                                                     **options)
     
-    def _findFirst(self, control_type: Type[UIBaseComponentWrapper], **options):
-        return UIBaseComponentWrapper(self._app).findFirst(
+    def _findFirst(self, control_type: Type[UIBaseComponent], **options):
+        return UIBaseComponent(self._app).findFirst(
                                                     control_type=control_type,
                                                     **options)
     
-    def _findFirstR(self, control_type: Type[UIBaseComponentWrapper], **options):
-        return UIBaseComponentWrapper(self._app).findFirstR(
+    def _findFirstR(self, control_type: Type[UIBaseComponent], **options):
+        return UIBaseComponent(self._app).findFirstR(
                                                     control_type=control_type,
                                                     **options)
     
-    def _findAllR(self, control_type: Type[UIBaseComponentWrapper], **options):
-        return UIBaseComponentWrapper(self._app).findAllR(
+    def _findAllR(self, control_type: Type[UIBaseComponent], **options):
+        return UIBaseComponent(self._app).findAllR(
                                                     control_type=control_type,
                                                     **options)
     
-    def _find(self, control_type: Type[UIBaseComponentWrapper], **options):
-        return UIBaseComponentWrapper(self._app).find(
+    def _find(self, control_type: Type[UIBaseComponent], **options):
+        return UIBaseComponent(self._app).find(
                                                     control_type=control_type,
                                                     **options)
 
-    def _findR(self, control_type: Type[UIBaseComponentWrapper], **options):
-        return UIBaseComponentWrapper(self._app).findR(
+    def _findR(self, control_type: Type[UIBaseComponent], **options):
+        return UIBaseComponent(self._app).findR(
                                                     control_type=control_type,
                                                     **options)
 
-    def window(self, timeout: int = 1, retry_interval: float = 0.1, **options):
+    def window(self, timeout: int = 1, retry_interval: float = 0.1, **options) -> UIWindow:
         try:
-            return self.windows(timeout, retry_interval, **options)[-1]
+            return self.windows(timeout=timeout, retry_interval=retry_interval, **options)[-1]
         except ElementNotFound:
              raise WindowtNotFound
     
-    def windows(self, timeout: int = 1, retry_interval: float = 0.1, **options):
+    def windows(self, timeout: int = 1, retry_interval: float = 0.1, **options) -> list[UIWindow]:
         try:
-            return self._findAllR(timeout=timeout, retry_interval=retry_interval,
-                        control_type=UIWindowWrapper,
-                        **options)
+            return self._findAllR(control_type=UIWindow, timeout=timeout, retry_interval=retry_interval, **options)
         except ElementNotFound:
              raise WindowtNotFound
     
