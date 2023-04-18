@@ -52,10 +52,10 @@ app.launchApp()
 app.connectApp()
 
 # Finding the window component and searching for elements within this window component
-main_window = app.window(title = "Visual Studio Code", timeout=2)
-main_window.findR("Toggle Primary Side Bar (Ctrl+B)", control_type=UIButton).press() '''  press will invoke a button without manually moving the mouse and clicking it 
+main_window = app.window(title = "Visual Studio Code", timeout = 2)
+main_window.findR(title = "Toggle Primary Side Bar (Ctrl+B)", control_type = UIButton).press() '''  press will invoke a button without manually moving the mouse and clicking it 
                                                                                           (a button could be invoked even if it isn't currently visible)  '''
-main_window.findR("Open Folder", control_type=UIButton).click() ''' however, click will move the mouse to the button location and click it
+main_window.findR(title = "Open Folder", control_type = UIButton).click() ''' however, click will move the mouse to the button location and click it
                                                                     (sometimes this can be more reliable) '''
 
 # Closing the window and terminating the application
