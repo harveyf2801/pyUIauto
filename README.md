@@ -38,7 +38,7 @@ from pyuiauto.components import UIButton
 # Finding the path location of the application
 app_paths = {
   "Darwin": "/Applications/Visual Studio Code.app",
-  "Windows": os.path.expanduser('~') + "\AppData\Local\Programs\Microsoft VS Code\Code.exe"
+  "Windows": os.path.expanduser('~') + "\\AppData\\Local\\Programs\\Microsoft VS Code\\Code.exe"
 }
 
 if system() in app_paths:
