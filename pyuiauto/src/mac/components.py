@@ -58,7 +58,7 @@ class UIBaseComponent(UIBaseComponentWrapper, metaclass=UIBaseComponentMeta):
         return self.component.AXValue
     
     def setValue(self, value):
-        self.component.setString("AXValue", value)
+        self.component.AXValue = value
     
     def setFocus(self):
         self.component.activate()
@@ -179,58 +179,16 @@ class UIBaseComponent(UIBaseComponentWrapper, metaclass=UIBaseComponentMeta):
     @property
     def title(self) -> str:
         return self.component.AXTitle
-    
-
-class UIButton(UIBaseComponent, UIButtonWrapper):
-    native_control_type: str = "AXButton"
-    
-    def press(self):
-        self.invoke()
-
-class UIApplication(UIBaseComponent):
-    native_control_type: str = "AXApplication"
-
-class UIWindow(UIBaseComponent, UIWindowWrapper):
-    native_control_type: str = "AXWindow"
-
-    def moveResize(self, x=None, y=None, width=None, height=None):
-        left, top, _, _ = self.getCoordinates()
-        w, h = self.getSizes()
-
-        # if no X is specified - so use current coordinate
-        if x is None:
-            x = left
-
-        # if no Y is specified - so use current coordinate
-        if y is None:
-            y = top
-
-        # if no width is specified - so use current width
-        if width is None:
-            width = w
-
-        # if no height is specified - so use current height
-        if height is None:
-            height = h
-
-        # ask for the window to be moved
-        point = CG.CGPoint(x=x, y=y)
-        self.component.AXPosition = AXValueCreate(kAXValueCGPointType, point)
-
-        # ask for the window to be resized
-        size = CG.CGSize(width=width, height=height)
-        self.component.AXSize = AXValueCreate(kAXValueCGSizeType, size)
-
-    def close(self):
-        self.component.AXCloseButton.Press()
-
-
 
 
 # ============================================
 
 
+class UIApplication(UIBaseComponent):
+    native_control_type: str = "AXApplication"
 
+
+# ============================================
 
 
 class UIButton(UIBaseComponent, UIButtonWrapper):

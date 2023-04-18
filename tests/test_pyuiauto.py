@@ -3,51 +3,65 @@ import os
 import pytest
 
 from pyuiauto.src.application import UIApplication
-from pyuiauto.src.components import UIWindow, UIButton
+from pyuiauto.src.components import UIWindow, UIButton, UISlider
 from pyuiauto import __version__
 
+from pyautogui import hotkey
+
 app_paths = {
-  "Darwin": "/Applications/Visual Studio Code.app",
-  "Windows": os.path.expanduser('~') + "\AppData\Local\Programs\Microsoft VS Code\Code.exe"
+  "Darwin": "/System/Applications/System Preferences.app",
+  "Windows": "c:\\Program Files\\Google\\Chrome\\Application\\chrome.exe"
 }
 
-@pytest.fixture()
+@pytest.fixture(scope="session", autouse=True)
+def AppName() -> str:
+    return "System Preferences" if system() == "Darwin" else "Notepad"
+
+@pytest.fixture(scope="session", autouse=True)
 def AppPath() -> str:
     if system() in app_paths:
         return app_paths[system()]
     else:
         raise NotImplementedError("The current OS is not currently supported: " + system())
     
-@pytest.fixture()
-def Application() -> UIApplication:
-    app = UIApplication(appName="Visual Studio Code", appPath=app_paths[system()])
+@pytest.fixture(scope="session", autouse=True)
+def Application(AppName, AppPath) -> UIApplication:
+    app = UIApplication(appName=AppName, appPath=AppPath)
     app.launchApp()
     app.connectApp()
 
     yield app
 
-    app.terminateApp()
+    #app.terminateApp()
+
+@pytest.fixture(scope="session", autouse=True)
+def MainWindow(Application) -> UIWindow:
+    return Application.window(timeout = 2)
 
 
 def test_version():
     assert __version__ == '0.1.0'
 
+@pytest.mark.usefixtures("MainWindow")
+@pytest.mark.skipif(condition=(system() != "Darwin"), reason="MacOS specific tests")
+class TestMacOS():
 
-class ComponentTests():
-    main_window: UIWindow
-
-    def test_window(self, Application):
-        ComponentTests.main_window = Application.window(title = "Visual Studio Code", timeout = 2)
+    def test_button_press(self, MainWindow):
+        MainWindow.findR(description = "Show All", control_type = UIButton).press()
     
-    def test_button_toggle_press(self):
-        button1 = ComponentTests.main_window.findR(title = "Toggle Primary Side Bar (Ctrl+B)", control_type = UIButton)
-        button1.toggle(value=1)
-        assert button1.getValue() == 1
+    def test_button_click(self, MainWindow):
+        MainWindow.findR(title = "Sound", control_type = UIButton).click()
+    
+    def test_slider(self, MainWindow):
+        MainWindow.findR(control_type = UISlider).setValue(0)
+        currentValue = MainWindow.findR(control_type = UISlider).getValue()
+        MainWindow.findR(control_type = UISlider).setValue(0.5)
 
-    def test_button_click(self):
-        button2 = ComponentTests.main_window.findR(title = "Toggle Panel (Ctrl+J)", control_type = UIButton)
-        current_value = button2.getValue()
-        button2.click()
-        assert button2.getValue() != current_value
+        assert currentValue == 0
+        
+    
 
+    def test_hotkeys(self, MainWindow):
+        pass#hotkey("command", "t", interval=0.01)
+    
 
