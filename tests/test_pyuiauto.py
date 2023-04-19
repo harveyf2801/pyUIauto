@@ -7,16 +7,20 @@ from pyuiauto.src.application import UIApplication
 from pyuiauto.src.components import UIWindow, UIButton, UISlider
 from pyuiauto import __version__
 
-from pyautogui import hotkey
+# pip installed modules
+try:
+        from pyautogui import hotkey
+except ImportError: # requires pip install
+        raise ModuleNotFoundError('To install the required modules use pip install pyautogui')
 
 app_paths = {
-  "Darwin": "/Applications/Visual Studio Code.app",
-  "Windows": "c:\\Program Files\\Google\\Chrome\\Application\\chrome.exe"
+  "Darwin": "/Applications/EVO.app",
+  "Windows": "C:/Program Files/Audient/EVO/EVO.exe"
 }
 
 @pytest.fixture(scope="session", autouse=True)
 def AppName() -> str:
-    return "Code" if system() == "Darwin" else "Notepad"
+    return "EVO"
 
 @pytest.fixture(scope="session", autouse=True)
 def AppPath() -> str:
@@ -33,29 +37,27 @@ def Application(AppName, AppPath) -> UIApplication:
 
     yield app
 
-    #app.terminateApp()
+    # app.terminateApp()
 
 @pytest.fixture(scope="session", autouse=True)
 def MainWindow(Application) -> UIWindow:
-    return Application.window(timeout = 2)
+    return Application.window(title="EVO Mixer", timeout = 2)
 
 
 def test_version():
     assert __version__ == '0.1.0'
 
-@pytest.mark.usefixtures("MainWindow")
 # @pytest.mark.skipif(condition=(system() != "Darwin"), reason="MacOS specific tests")
+@pytest.mark.usefixtures("MainWindow")
 class TestMacOS():
 
     def test_button_click(self, MainWindow):
-        shortcut = "Ctrl+B" if (system() != "Darwin") else "⌘B"
-        button = MainWindow.findR(description = f"Toggle Primary Side Bar ({shortcut})", control_type = UIButton)
+        button = MainWindow.findR(title = f"Mic 1 polarity", control_type = UIButton)
         button.click()
         button.click()
     
     def test_button_press(self, MainWindow):
-        shortcut = "Ctrl+J" if (system() != "Darwin") else "⌘J"
-        button = MainWindow.findR(description = f"Toggle Panel ({shortcut})", control_type = UIButton)
+        button = MainWindow.findR(title = f"Mic 1 solo", control_type = UIButton)
         
         button.press()
         button.press()

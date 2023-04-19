@@ -15,7 +15,7 @@ class ElementNotFound(RuntimeError):
     """Raised when an element is not found"""
     pass
 
-class WindowtNotFound(RuntimeError):
+class WindowNotFound(RuntimeError):
     """Raised when a window is not found"""
     pass
 

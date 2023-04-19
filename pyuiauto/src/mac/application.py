@@ -1,7 +1,7 @@
 #___MY_MODULES___
 from pyuiauto.src.mac.components import UIBaseComponent, UIWindow
 from pyuiauto.src.base.application import UIApplicationWrapper
-from pyuiauto.src.exceptions import ElementNotFound, WindowtNotFound
+from pyuiauto.src.exceptions import ElementNotFound, WindowNotFound
 
 #___MODULES___
 from typing import Type
@@ -61,13 +61,13 @@ class UIApplication(UIApplicationWrapper):
         try:
             return self.windows(timeout=timeout, retry_interval=retry_interval, **options)[-1]
         except ElementNotFound:
-             raise WindowtNotFound
+             raise WindowNotFound
     
     def windows(self, timeout: int = 1, retry_interval: float = 0.1, **options) -> list[UIWindow]:
         try:
             return self._findAllR(control_type=UIWindow, timeout=timeout, retry_interval=retry_interval, **options)
         except ElementNotFound:
-             raise WindowtNotFound
+             raise WindowNotFound
     
     def isAppAlreadyRunning(self):
         for i in atomacos.NativeUIElement.getRunningApps():
