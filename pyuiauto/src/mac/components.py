@@ -5,7 +5,12 @@ import time
 from abc import ABCMeta
 import logging
 
-from atomacos import NativeUIElement
+# pip installed modules
+try:
+    from atomacos import NativeUIElement
+except ImportError: # requires pip install
+    raise ModuleNotFoundError('To install the required modules use pip install atomacos (MacOS ONLY)')
+
 
 from ApplicationServices import AXValueCreate, kAXValueCGPointType, kAXValueCGSizeType
 import Quartz.CoreGraphics as CG
@@ -97,7 +102,7 @@ class UIBaseComponent(UIBaseComponentWrapper, metaclass=UIBaseComponentMeta):
         return self.component.AXSize
     
     def getChildren(self):
-        return list(self._wrapper_function_from_native(component, component.AXRole) for component in self.component.AXChildren)
+        return list(UIBaseComponent(component, component.AXRole) for component in self.component.AXChildren)
     
     getDescendants = getChildren
     
@@ -169,10 +174,6 @@ class UIBaseComponent(UIBaseComponentWrapper, metaclass=UIBaseComponentMeta):
             raise ElementNotFound(f"{len(items)} Elements found matching the criteria - ControlType: {control_type} - {criteria}")
 
         return items[0]
-    
-    @property
-    def title(self):
-        return self.component.AXTitle
     
     @classmethod
     @property
