@@ -3,6 +3,9 @@ from __future__ import annotations
 from typing import Type
 import time
 from abc import ABCMeta
+import logging
+
+from atomacos import NativeUIElement
 
 from ApplicationServices import AXValueCreate, kAXValueCGPointType, kAXValueCGSizeType
 import Quartz.CoreGraphics as CG
@@ -34,9 +37,14 @@ class UIBaseComponentMeta(UIBaseComponentWrapperMeta):
         wrapper_match = UIBaseComponent
 
         # Check for a more specific wrapper in the registry
+        try:
+            control_type = component.AXRole
+        except:
+            control_type = "No Role"
+            logging.warning(f"Component: {component} | has no control type / AXRole attribute")
 
-        if component.AXRole in UIBaseComponentWrapperMeta.control_type_to_cls:
-            wrapper_match = UIBaseComponentWrapperMeta.control_type_to_cls[component.AXRole]
+        if control_type in UIBaseComponentWrapperMeta.control_type_to_cls:
+            wrapper_match = UIBaseComponentWrapperMeta.control_type_to_cls[control_type]
         else:
             raise NotImplementedError(f"{component} doesn't have an implemented wrapper")
 
@@ -46,12 +54,12 @@ class UIBaseComponentMeta(UIBaseComponentWrapperMeta):
 
 class UIBaseComponent(UIBaseComponentWrapper, metaclass=UIBaseComponentMeta):
 
-    def __new__(cls, component):
+    def __new__(cls, component: NativeUIElement):
         """Construct the control wrapper"""
         return super(UIBaseComponent, cls)._create_wrapper(cls, component, UIBaseComponent)
 
     # -----------------------------------------------------------
-    def __init__(self, component):
+    def __init__(self, component: NativeUIElement):
         UIBaseComponentWrapper.__init__(self, component)
 
     def getValue(self):
