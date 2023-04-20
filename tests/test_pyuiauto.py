@@ -14,13 +14,13 @@ except ImportError: # requires pip install
         raise ModuleNotFoundError('To install the required modules use pip install pyautogui')
 
 app_paths = {
-  "Darwin": "/Applications/EVO.app",
-  "Windows": "C:/Program Files/Audient/EVO/EVO.exe"
+  "Darwin": "/Applications/iD.app",
+  "Windows": "C:/Program Files/Audient/iD/iD.exe"
 }
 
 @pytest.fixture(scope="session", autouse=True)
 def AppName() -> str:
-    return "EVO"
+    return "iD"
 
 @pytest.fixture(scope="session", autouse=True)
 def AppPath() -> str:
@@ -41,26 +41,53 @@ def Application(AppName, AppPath) -> UIApplication:
 
 @pytest.fixture(scope="session", autouse=True)
 def MainWindow(Application) -> UIWindow:
-    return Application.window(title="EVO Mixer", timeout = 2)
+    return Application.window(title="iD Mixer", timeout = 2)
 
 
 def test_version():
     assert __version__ == '0.1.0'
 
+import time
 # @pytest.mark.skipif(condition=(system() != "Darwin"), reason="MacOS specific tests")
 @pytest.mark.usefixtures("MainWindow")
 class TestMacOS():
 
     def test_button_click(self, MainWindow):
+        MainWindow.setFocus()
         button = MainWindow.findR(title = f"Mic 1 polarity", control_type = UIButton)
+        previous = button.getValue()
         button.click()
-        button.click()
+        current = button.getValue()
+
+        if previous == current:
+            assert False
+        else:
+            button.click()
+            assert True
     
     def test_button_press(self, MainWindow):
         button = MainWindow.findR(title = f"Mic 1 solo", control_type = UIButton)
-        
+        previous = button.getValue()
         button.press()
-        button.press()
+        current = button.getValue()
+
+        if previous == current:
+            assert False
+        else:
+            button.press()
+            assert True
+    
+    def test_slider_value(self, MainWindow):
+        slider = MainWindow.findR(title = f"Mic 1 fader", control_type = UISlider)
+        previous = slider.getValue()
+        slider.setValue(0 if previous != 0 else -128)
+        current = slider.getValue()
+
+        if previous == current:
+            assert False
+        else:
+            slider.setValue(previous)
+            assert True
     
     # def test_hotkeys(self, MainWindow):
     #     shortcut = ("ctrl", "alt", "b") if (system() != "Darwin") else ("option", "command", "b")
@@ -84,4 +111,3 @@ class TestMacOS():
     # def test_hotkeys(self, MainWindow):
     #     pass#hotkey("command", "t", interval=0.01)
     
-
