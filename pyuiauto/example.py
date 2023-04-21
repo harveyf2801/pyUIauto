@@ -21,7 +21,7 @@ from pyuiauto.src.application import UIApplication
 from pyuiauto.src.components import UIButton, UIWindow, UISlider
 
 
-def main():
+def example():
 
     import time
 
@@ -41,4 +41,4 @@ def main():
 
 if __name__ == '__main__':
     
-    main()
+    example()

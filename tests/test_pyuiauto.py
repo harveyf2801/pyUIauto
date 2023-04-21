@@ -14,13 +14,13 @@ except ImportError: # requires pip install
         raise ModuleNotFoundError('To install the required modules use pip install pyautogui')
 
 app_paths = {
-  "Darwin": "/Applications/iD.app",
-  "Windows": "C:/Program Files/Audient/iD/iD.exe"
+  "Darwin": "/Applications/EVO.app",
+  "Windows": "C:/Program Files/Audient/EVO/EVO.exe"
 }
 
 @pytest.fixture(scope="session", autouse=True)
 def AppName() -> str:
-    return "iD"
+    return "EVO"
 
 @pytest.fixture(scope="session", autouse=True)
 def AppPath() -> str:
@@ -37,11 +37,11 @@ def Application(AppName, AppPath) -> UIApplication:
 
     yield app
 
-    # app.terminateApp()
+    app.terminateApp()
 
 @pytest.fixture(scope="session", autouse=True)
 def MainWindow(Application) -> UIWindow:
-    return Application.window(title="iD Mixer", timeout = 2)
+    return Application.window(title="EVO Mixer", timeout = 2)
 
 
 def test_version():
@@ -88,26 +88,13 @@ class TestMacOS():
         else:
             slider.setValue(previous)
             assert True
-    
-    # def test_hotkeys(self, MainWindow):
-    #     shortcut = ("ctrl", "alt", "b") if (system() != "Darwin") else ("option", "command", "b")
-    #     hotkey(*shortcut, interval=0.01)
-
-    #     button = MainWindow.findR(description = "Close Secondary Side Bar", control_type = UIButton, timeout=2)
-    #     hotkey(*shortcut, interval=0.01)
-    #     assert True
-
         
-    # def test_button_click(self, MainWindow):
-    #     MainWindow.findR(title = "Sound", control_type = UIButton).click()
-    
-    # def test_slider(self, MainWindow):
-    #     MainWindow.findR(control_type = UISlider).setValue(0)
-    #     currentValue = MainWindow.findR(control_type = UISlider).getValue()
-    #     MainWindow.findR(control_type = UISlider).setValue(0.5)
+    def test_hotkeys(self, Application):
+        hotkey("ctrl", "4", interval=0.01)
+        try: 
+            system_panel = Application.window(title="SYSTEM PANEL", timeout=2)
+            system_panel.close()
+            assert True
+        except WindowsError:
+            assert False
 
-    #     assert currentValue == 0
-        
-    # def test_hotkeys(self, MainWindow):
-    #     pass#hotkey("command", "t", interval=0.01)
-    

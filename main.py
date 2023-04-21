@@ -1,4 +1,4 @@
-from pyuiauto.main import main
+from pyuiauto.example import example
 
 if __name__ == '__main__':
-    main()
+    example()
