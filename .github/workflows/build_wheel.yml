@@ -83,5 +83,5 @@ jobs:
         working-directory: artifacts
         run: |
           for i in $( ls ); do
-            cat $i/$ARTIFACT
+            cat $i
           done
