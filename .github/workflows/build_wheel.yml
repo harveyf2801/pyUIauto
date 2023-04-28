@@ -8,6 +8,10 @@ concurrency:
   group: '${{ github.workflow }} @ ${{ github.head_ref || github.ref }}'
   cancel-in-progress: true
 
+artifacts:
+  paths:
+    - ./dist/*.whl
+
 jobs:
 
   build:
@@ -68,7 +72,8 @@ jobs:
       - uses: actions/upload-artifact@v2
         with:
           name: build-${{ matrix.os }}-${{ github.sha }}
-          path: ./dist
+          path: ${{ env.ARTIFACT }}
+          if-no-files-found: error
 
   publish:
     runs-on: ubuntu-latest
