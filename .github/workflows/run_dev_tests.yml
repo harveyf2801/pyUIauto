@@ -21,7 +21,7 @@ jobs:
 
     name: Run dev tests
     runs-on: ${{ matrix.os }}
-    timeout-minutes: 5
+    timeout-minutes: 8
 
     defaults:
       run:
@@ -35,14 +35,34 @@ jobs:
           ref: develop
       - run: git pull develop
 
-      - name: Check PyEnv and Python version is installed
-        run: pyenv install 3.9.13
-      
-      - name: Configure Python global version
-        run: pyenv global 3.9.13
+      - name: Set up python
+        id: setup-python
+        uses: actions/setup-python@v4
+        with:
+          python-version: '3.9.13'
 
-      - name: Install and Update packages needed for project using Poetry
-        run: poetry install
+      - name: Install Poetry
+        uses: snok/install-poetry@v1
+        with:
+          virtualenvs-create: true
+          virtualenvs-in-project: true
+
+      - name: Load cached venv
+        id: cached-pip-wheels
+        uses: actions/cache@v3
+        with:
+          path: ~/.cache
+          key: venv-${{ runner.os }}-${{ steps.setup-python.outputs.python-version }}-${{ hashFiles('**/poetry.lock') }}
+
+      - name: Install dependencies
+        run: poetry install --no-interaction --no-root
+
+      - name: Install library
+        run: poetry install --no-interaction
+
+      - run: |
+          source $VENV
+          pytest --version
 
   # Run dev tests
       - name: Run pytest
