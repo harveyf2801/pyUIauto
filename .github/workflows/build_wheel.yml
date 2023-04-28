@@ -3,9 +3,6 @@ name: Run dev tests
 on:
   workflow_dispatch:
 
-permissions:
-  contents: read
-
 # if a new request comes through, cancel previous workflow and start again
 concurrency:
   group: '${{ github.workflow }} @ ${{ github.head_ref || github.ref }}'
@@ -32,8 +29,8 @@ jobs:
       - name: Check out repository
         uses: actions/checkout@v3
         with:
-          ref: develop
-      - run: git pull origin develop
+          ref: main
+      - run: git pull origin main
 
       - name: Set up python
         id: setup-python
@@ -64,13 +61,16 @@ jobs:
           source $VENV
           pytest --version
 
-  # Run dev tests
-      - name: Run OS compatibility tests
-        run: echo "Running OS compatibility tests"
-      - run: |
-          poetry run pytest tests/test_os.py -vvv -s --noconftest --log-cli-level=DEBUG
-
-      - name: Run general package tests
-        run: echo "Running general package tests"
-      - run: |
-          poetry run pytest tests/test_pyuiauto.py -vvv -s --log-cli-level=DEBUG
+  # Run wheel build and install
+      - name: Build wheel and install
+        run: |
+          poetry build
+      - name: Configure Git
+        run: |
+          git config --global user.email "47286380+harveyf2801@users.noreply.github.com"
+          git config --global user.name "harveyf2801"
+      - name: Commit and push wheel
+        run: |
+          git add -f ./dist/${{ runner.os }}/*.whl
+          git commit -m 'pushing new wheel for ${{ runner.os }}'
+          git push
