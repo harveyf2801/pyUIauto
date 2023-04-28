@@ -10,7 +10,7 @@ concurrency:
 
 jobs:
 
-  run-tests:
+  build:
 
     strategy:
         matrix:
@@ -64,13 +64,23 @@ jobs:
   # Run wheel build and install
       - name: Build wheel and install
         run: |
-          poetry build --repository ./dist/${{ runner.os }}/
-      - name: Configure Git
+          poetry build
+      - uses: actions/upload-artifact@v2
+        with:
+          name: build-${{ matrix.os }}-${{ github.sha }}
+          path: ${{ env.ARTIFACT }}
+
+  publish:
+    runs-on: ubuntu-latest
+    needs: build
+    steps:
+      - uses: actions/download-artifact@v2
+        with:
+          path: artifacts
+
+      - shell: bash
+        working-directory: artifacts
         run: |
-          git config --global user.email "47286380+harveyf2801@users.noreply.github.com"
-          git config --global user.name "harveyf2801"
-      - name: Commit and push wheel
-        run: |
-          git add -f ./dist/${{ runner.os }}/*.whl
-          git commit -m 'pushing new wheel for ${{ runner.os }}'
-          git push
+          for i in $( ls ); do
+            cat $i/$ARTIFACT
+          done
