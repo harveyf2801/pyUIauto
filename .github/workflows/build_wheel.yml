@@ -8,10 +8,6 @@ concurrency:
   group: '${{ github.workflow }} @ ${{ github.head_ref || github.ref }}'
   cancel-in-progress: true
 
-artifacts:
-  paths:
-    - ./dist/*.whl
-
 jobs:
 
   build:
