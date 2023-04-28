@@ -10,9 +10,6 @@ This library / framework takes two popular UI automation libraries and combines 
 
 ### Dependencies
 
-* Describe any prerequisites, libraries, OS version, etc., needed before installing program.
-* ex. Windows 10
-
 Python Packages:
 - pywinauto (Windows / Linux)
 - atomacos (MacOS)
@@ -25,8 +22,6 @@ OS Compatibility:
 ( Currently untested on Linux )
 
 ## Example
-
-Opening a folder in Visual Studio Code using the python automation library:
 
 ```python
 # Import the tools needed
