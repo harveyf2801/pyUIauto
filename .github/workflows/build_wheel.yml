@@ -64,7 +64,7 @@ jobs:
   # Run wheel build and install
       - name: Build wheel and install
         run: |
-          poetry build
+          poetry build --repository ./dist/${{ runner.os }}/
       - name: Configure Git
         run: |
           git config --global user.email "47286380+harveyf2801@users.noreply.github.com"
