@@ -1,0 +1,51 @@
+name: Run dev tests
+
+on:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+# if a new request comes through, cancel previous workflow and start again
+concurrency:
+  group: '${{ github.workflow }} @ ${{ github.head_ref || github.ref }}'
+  cancel-in-progress: true
+
+jobs:
+
+  run-tests:
+
+    strategy:
+        matrix:
+          os: [ "windows-latest", "macos-latest" ]
+
+    name: Run dev tests
+    runs-on: ${{ matrix.os }}
+    timeout-minutes: 5
+
+    defaults:
+      run:
+        shell: bash
+
+  # Build the test suite
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v3
+        with:
+          ref: develop
+      - run: git pull HEAD^
+
+      - name: Check PyEnv and Python version is installed
+        run: pyenv install 3.9.13
+      
+      - name: Configure Python global version
+        run: pyenv global 3.9.13
+
+      - name: Install and Update packages needed for project using Poetry
+        run: poetry install
+
+  # Run dev tests
+      - name: Run pytest
+        run: echo "Running OS compatibility tests"
+      - run: |
+          poetry run pytest tests/test_os.py -vvv -s --noconftest --log-cli-level=DEBUG
