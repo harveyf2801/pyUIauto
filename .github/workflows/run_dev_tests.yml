@@ -33,7 +33,7 @@ jobs:
         uses: actions/checkout@v3
         with:
           ref: develop
-      - run: git pull develop
+      - run: git pull origin develop
 
       - name: Set up python
         id: setup-python
