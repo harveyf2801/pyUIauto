@@ -8,9 +8,12 @@ concurrency:
   group: '${{ github.workflow }} @ ${{ github.head_ref || github.ref }}'
   cancel-in-progress: true
 
-artifacts:
-  paths:
-    - ./dist/*.whl
+# artifacts:
+#   paths:
+#     - ./dist/*.whl
+
+env:
+  ARTIFACT: artifact.bin
 
 jobs:
 
