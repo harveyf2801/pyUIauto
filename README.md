@@ -1,7 +1,9 @@
 # pyUIauto
 
-![Develop Branch](https://github.com/harveyf2801/pyUIauto/actions/workflows/run_dev_tests.yml/badge.svg?branch=develop)
-![Main Branch](https://github.com/harveyf2801/pyUIauto/actions/workflows/run_dev_tests.yml/badge.svg?branch=main)
+| Branch      | Status                                                                                                                  |
+| :---------- | :---------------------------------------------------------------------------------------------------------------------: |
+| Main        | ![Main Branch](https://github.com/harveyf2801/pyUIauto/actions/workflows/run_dev_tests.yml/badge.svg?branch=main)       |
+| Develop     | ![Develop Branch](https://github.com/harveyf2801/pyUIauto/actions/workflows/run_dev_tests.yml/badge.svg?branch=develop) |
 
 Python UI Automation library, for cross-platform applications, interfacing through the accessibility API.
 
