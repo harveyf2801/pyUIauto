@@ -25,7 +25,7 @@ jobs:
 
     name: Build Wheel
     runs-on: ${{ matrix.os }}
-    timeout-minutes: 8
+    timeout-minutes: 10
 
     defaults:
       run:
