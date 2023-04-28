@@ -1,7 +1,7 @@
 #___MY_MODULES___
-from pyuiauto.src.mac.components import UIBaseComponent, UIWindow
-from pyuiauto.src.base.application import UIApplicationWrapper
-from pyuiauto.src.exceptions import ElementNotFound, WindowNotFound
+from pyuiauto.mac.components import UIBaseComponent, UIWindow
+from pyuiauto.base.application import UIApplicationWrapper
+from pyuiauto.exceptions import ElementNotFound, WindowNotFound
 
 #___MODULES___
 from typing import Type

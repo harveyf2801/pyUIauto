@@ -1,5 +1,5 @@
 # __MY_MODULES__
-from pyuiauto.src.base.components import UIWindowWrapper
+from pyuiauto.base.components import UIWindowWrapper
 
 # ___MODULES___
 from abc import ABC, abstractmethod

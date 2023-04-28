@@ -1,17 +1,27 @@
 [tool.poetry]
 name = "pyUIauto"
 version = "0.1.0"
-description = ""
-authors = ["harveyf2801 <47286380+harveyf2801@users.noreply.github.com>"]
+description = "Python UI Automation library, for cross-platform applications, interfacing through the accessibility API"
+authors = ["Harvey Fretwell <hgfretwell@gmail.com>"]
+maintainers = ["Harvey Fretwell <hgfretwell@gmail.com>"]
+
+license = "GPL-3.0-only"
+readme = "README.md"
+homepage = "https://github.com/harveyf2801/pyUIauto"
+repository = "https://github.com/harveyf2801/pyUIauto"
+keywords = ["automation", "accessibility", "cross-platform", "ui", "desktop", "pywinauto", "atomac"]
+include = [
+    "LICENSE",
+]
 
 [tool.poetry.dependencies]
 python = "^3.9"
 atomacos = {git = "https://github.com/daveenguyen/atomacos.git", platform = "darwin"}
 pywinauto = {version = "^0.6.8", platform = "win32"}
-pytest = "^5.2"
 pyautogui = "0.9.41"
 
 [tool.poetry.dev-dependencies]
+pytest = "^5.2"
 
 [build-system]
 requires = ["poetry-core>=1.0.0"]

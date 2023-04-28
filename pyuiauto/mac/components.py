@@ -16,8 +16,8 @@ from ApplicationServices import AXValueCreate, kAXValueCGPointType, kAXValueCGSi
 import Quartz.CoreGraphics as CG
 
 #___MY_MODULES___
-from pyuiauto.src.exceptions import ElementNotFound
-from pyuiauto.src.base.components import *
+from pyuiauto.exceptions import ElementNotFound
+from pyuiauto.base.components import *
 
 
 #___DEFINING_NATIVE_WRAPPER_META___

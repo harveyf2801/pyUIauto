@@ -1,5 +1,7 @@
 # pyUIauto
 
+![Main Branch](https://github.com/harveyf2801/pyUIauto/actions/workflows/run_dev_tests.yml/badge.svg?branch=main)
+
 Python UI Automation library, for cross-platform applications, interfacing through the accessibility API.
 
 ## Description
@@ -11,11 +13,13 @@ This library / framework takes two popular UI automation libraries and combines 
 ### Dependencies
 
 Python Packages:
+
 - pywinauto (Windows / Linux)
 - atomacos (MacOS)
 - pyautogui
 
 OS Compatibility:
+
 - Windows
 - MacOS
 
@@ -61,17 +65,17 @@ app.terminateApp()
 ## Authors
 
 ex. Harvey Fretwell
-ex. (https://github.com/pywinauto/pywinauto/tree/master)
-ex. (https://github.com/daveenguyen/atomacos)
-ex. (https://github.com/asweigart/pyautogui)
+ex. [pyWinAuto](https://github.com/pywinauto/pywinauto/tree/master)
+ex. [atomacos](https://github.com/daveenguyen/atomacos)
+ex. [pyAutoGUI](https://github.com/asweigart/pyautogui)
 
 ## Version History
 
-* 0.1
-    * Initial Release
+- 0.1
+  - Initial Release
 
 ## Acknowledgments
 
-* [pyWinAuto](https://github.com/pywinauto/pywinauto/tree/master)
-* [atomacos](https://github.com/daveenguyen/atomacos)
-* [pyAutoGUI](https://github.com/asweigart/pyautogui)
+- [pyWinAuto](https://github.com/pywinauto/pywinauto/tree/master)
+- [atomacos](https://github.com/daveenguyen/atomacos)
+- [pyAutoGUI](https://github.com/asweigart/pyautogui)
