@@ -69,7 +69,7 @@ jobs:
         run: echo "Running OS compatibility tests"
       - run: |
           poetry run pytest tests/test_os.py -vvv -s --noconftest --log-cli-level=DEBUG
-  
+
       - name: Run general package tests
         run: echo "Running general package tests"
       - run: |
