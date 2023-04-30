@@ -1,8 +1,11 @@
 # __MY_MODULES__
-from pyuiauto.base.components import UIWindowWrapper
+from pyuiauto.base.components import UIWindowWrapper, UIButtonWrapper
+from pyuiauto.exceptions import ProcessNotFoundError
 
 # ___MODULES___
+import time
 from abc import ABC, abstractmethod
+import logging
 
 
 # ___CLASSES___
@@ -11,11 +14,14 @@ class UIApplicationWrapper(ABC):
     def __init__(self, appName: str, appPath: str = None) -> None:
         self.appName = appName
         self.appPath = appPath
+        self.end_time = 0
+        self.start_time = 0
 
     @abstractmethod
     def launchApp(self) -> None:
         '''Application class launch app method\n
         Launches the application.'''
+        self.start_time = time.time()
 
     @abstractmethod
     def connectApp(self) -> None:
@@ -26,6 +32,10 @@ class UIApplicationWrapper(ABC):
     def terminateApp(self) -> None:
         '''Application class terminate app method\n
         Force quits the application.'''
+        self.end_time = time.time()
+    
+    def getRuntime(self):
+        return self.end_time - self.start_time
     
     @abstractmethod
     def window(self, timeout: int = 1, retry_interval: float = 0.1, **criteria) -> UIWindowWrapper:
@@ -62,3 +72,33 @@ class UIApplicationWrapper(ABC):
     def isAppRunning(self) -> bool:
         '''Application class is app running method\n
         This method checks if the application is still running which can help to identify crashes.'''
+
+    @abstractmethod
+    def getSystemTrayIcon(self) -> UIButtonWrapper:
+        '''Controller class get system tray icon method\n
+        Returns the system tray icon button component.'''
+
+    @abstractmethod
+    def getCrashReport(self) -> str:
+        '''Controller class get crash report method\n
+        Gets all crash reports between the start and end time of the application running.'''
+
+    def relaunchApp(self):
+        '''Controller class relaunch app method\n
+        Uses it's context manager __enter__ __exit__ methods to quit and reopen the application.'''
+        self.__exit__()
+        self.launchApp()
+        self.__enter__()
+
+    def __enter__(self):
+        self.launchApp()
+        self.connectApp()
+        return self
+    
+    def __exit__(self, *args):
+        if not self.isAppRunning():
+            logging.critical(f"The {self.appName} application may have crashed")
+            logging.error(f"Crash report:\n{self.getCrashReport()}")
+            raise ProcessNotFoundError(f"The {self.appName} application was not found in running applications")
+        else:
+            self.terminateApp()
