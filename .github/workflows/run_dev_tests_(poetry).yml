@@ -41,11 +41,24 @@ jobs:
         with:
           python-version: '3.9.13'
 
-      - name: Install wheel package
-        run: pip install wheel
+      - name: Install Poetry
+        uses: snok/install-poetry@v1
+        with:
+          virtualenvs-create: true
+          virtualenvs-in-project: true
 
-      - name: Install pyuiauto wheel
-        run: pip install dist\pyUIauto-0.1.0-py3-none-any.whl
+      - name: Load cached venv
+        id: cached-pip-wheels
+        uses: actions/cache@v3
+        with:
+          path: ~/.cache
+          key: venv-${{ runner.os }}-${{ steps.setup-python.outputs.python-version }}-${{ hashFiles('**/poetry.lock') }}
+
+      - name: Install dependencies
+        run: poetry install --no-interaction --no-root
+
+      - name: Install library
+        run: poetry install --no-interaction
 
       - run: |
           source $VENV
@@ -55,9 +68,9 @@ jobs:
       - name: Run OS compatibility tests
         run: echo "Running OS compatibility tests"
       - run: |
-          pytest tests/test_os.py -vvv -s --noconftest --log-cli-level=DEBUG -p no:faulthandler
+          poetry run pytest tests/test_os.py -vvv -s --noconftest --log-cli-level=DEBUG  -p no:faulthandler
 
       - name: Run general package tests
         run: echo "Running general package tests"
       - run: |
-          pytest tests/test_pyuiauto.py -vvv -s --log-cli-level=DEBUG -p no:faulthandler
+          poetry run pytest tests/test_pyuiauto.py -vvv -s --log-cli-level=DEBUG -p no:faulthandler
