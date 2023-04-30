@@ -1,4 +1,4 @@
-name: Run dev tests
+name: Run dev tests (poetry)
 
 on:
   workflow_dispatch:
@@ -19,7 +19,7 @@ jobs:
         matrix:
           os: [ "windows-latest", "macos-latest" ]
 
-    name: Run dev tests
+    name: Run dev tests (poetry)
     runs-on: ${{ matrix.os }}
     timeout-minutes: 8
 
