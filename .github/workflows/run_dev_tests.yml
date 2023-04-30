@@ -46,6 +46,11 @@ jobs:
 
       - name: Install pyuiauto wheel
         run: pip install dist/pyUIauto-0.1.0-py3-none-any.whl
+      
+      - name: Install pytest
+        run: |
+          pip install pytest
+          pytest --version
 
   # Run dev tests
       - name: Run OS compatibility tests
