@@ -45,7 +45,7 @@ jobs:
         run: pip install wheel
 
       - name: Install pyuiauto wheel
-        run: pip install dist\pyUIauto-0.1.0-py3-none-any.whl
+        run: pip install dist/pyUIauto-0.1.0-py3-none-any.whl
 
       - run: |
           source $VENV
