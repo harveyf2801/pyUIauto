@@ -1,9 +1,5 @@
-#___MY_MODULES___
-from pyuiauto.win.components import UIBaseComponent, UIWindow, UIButton
-from pyuiauto.base.application import UIApplicationWrapper
-from pyuiauto.exceptions import ElementNotFound, WindowNotFound
-
 #___MODULES___
+from __future__ import annotations
 from typing import Type
 import datetime
 import subprocess
@@ -14,6 +10,83 @@ try:
         from pywinauto.application import process_get_modules
 except ImportError: # requires pip install
         raise ModuleNotFoundError('To install the required modules use pip install pywinauto (Windows ONLY)')
+
+#___MY_MODULES___
+from pywinauto.controls.uiawrapper import UIAWrapper
+from pyuiauto.win.components import UIBaseComponent, UIWindow, UIButton
+from pyuiauto.base.application import UIApplicationWrapper, UISystemTrayIconWrapper
+from pyuiauto.exceptions import ElementNotFound, WindowNotFound
+
+class UIBackendExplorer():
+    backend_explorer_app = pywinauto.Application(backend="uia").connect(path="explorer.exe")
+    backend_explorer_app = pywinauto.Application(backend="uia").connect(path="explorer.exe")
+    taskbar: pywinauto.WindowSpecification = backend_explorer_app.window(title="Taskbar", class_name="Shell_TrayWnd")
+
+    try:
+        taskbarExpand = UIButton(taskbar.child_window(title="Show Hidden Icons", class_name="SystemTray.NormalButton").wrapper_object())
+    except:
+        try:
+            taskbarExpand = UIButton(taskbar.child_window(title="Notification Chevron").wrapper_object())
+        except:
+            raise ElementNotFound("Show Hidden Icons not found.")
+        
+backendExplorer = UIBackendExplorer()
+
+class UISystemTrayIcon(UISystemTrayIconWrapper):
+    def __init__(self, app: UIApplicationWrapper):
+        super().__init__(app)
+
+        self._iconHidden = False
+        
+        try:
+            self._getIcon(backendExplorer.taskbar)
+        except:
+                self.__systrayExpandWindow = None
+                self._iconHidden = True
+    
+    def _getIcon(self, parent: pywinauto.WindowSpecification) -> UIButton:
+        return UIButton(parent.child_window(title_re=f".*of.*{self.app.appName}", control_type="Button", found_index=0).wrapper_object())
+
+    def __openSystemTrayExpand(self) -> pywinauto.WindowSpecification:
+        # Open the system tray
+        backendExplorer.taskbarExpand.invoke()
+
+        # Select the audient icon
+        try:
+            systray = pywinauto.Application(backend="uia").connect(class_name="TopLevelWindowForOverflowXamlIsland")
+            systrayWindow = systray.window(class_name="TopLevelWindowForOverflowXamlIsland")
+            
+        except:
+            try:
+                systray = pywinauto.Application(backend="uia").connect(class_name="NotifyIconOverflowWindow")
+                systrayWindow = systray.window(class_name="NotifyIconOverflowWindow")
+                
+            except:
+                raise WindowNotFound("Notification Overflow Window not found.")
+
+        systrayWindow.wait("visible")
+        return systrayWindow
+
+    def __closeNotifictionExpand(self) -> None:
+        # Close the system tray
+        if self.__systrayExpandWindow.is_visible():
+            backendExplorer.taskbarExpand.invoke()
+            self.__systrayExpandWindow.wait_not("visible")
+
+    def __enter__(self) -> UIButton:
+        if self._iconHidden:
+            try:
+                self.__systrayExpandWindow = self.__openSystemTrayExpand()
+                return self._getIcon(self.__systrayExpandWindow)
+            except: raise ElementNotFound("System Tray Icon not found.")
+        
+        return self._getIcon(backendExplorer.taskbar)
+    
+    def __exit__(self, *args):
+        if self._iconHidden:
+            self.__closeNotifictionExpand()
+
+
 
 #___DEFINING_NATIVE_METHODS___
 class UIApplication(UIApplicationWrapper):
@@ -52,39 +125,9 @@ class UIApplication(UIApplicationWrapper):
 
     def isAppRunning(self):
         return self._app.is_process_running()
-    
-    def _setAppComponentConstants(self) -> None:
-        self.__backend_explorer_app = pywinauto.Application(backend="uia").connect(path="explorer.exe")
-        self.__backend_explorer_app = pywinauto.Application(backend="uia").connect(path="explorer.exe")
-        self.__taskbar = self.__backend_explorer_app.window(title="Taskbar", class_name="Shell_TrayWnd")
-        # self.__taskbarExpand = self.__taskbar.child_window(title="Notification Chevron").wrapper_object()
-        try:
-            self.__taskbarExpand = self.__taskbar.child_window(title="Show Hidden Icons", class_name="SystemTray.NormalButton").wrapper_object()
-        except:
-            try:
-                self.__taskbarExpand = self.__taskbar.child_window(title="Notification Chevron").wrapper_object()
-            except:
-                raise ElementNotFound("Show Hidden Icons not found.")
 
-    def getSystemTrayIcon(self) -> UIButton:
-        # Open the system tray
-        self.__taskbarExpand.click_input()
-
-        # Select the audient icon
-        try:
-            systray = pywinauto.Application(backend="uia").connect(class_name="TopLevelWindowForOverflowXamlIsland")
-            systrayWindow = systray.window(class_name="TopLevelWindowForOverflowXamlIsland")
-            
-        except:
-            try:
-                systray = pywinauto.Application(backend="uia").connect(class_name="NotifyIconOverflowWindow")
-                systrayWindow = systray.window(class_name="NotifyIconOverflowWindow")
-                
-            except:
-                raise WindowNotFound("Notification Overflow Window not found.")
-
-        systrayWindow.wait("visible")
-        return UIButton(systrayWindow.child_window(title_re=f".*{self.appName}", control_type="Button", found_index=0).wrapper_object()) # audient app icon
+    def getSystemTrayIcon(self):
+        return UISystemTrayIcon(self)
     
     def getCrashReport(self):
         # Convert epoch timestamp to a datetime object

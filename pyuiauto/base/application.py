@@ -1,14 +1,26 @@
-# __MY_MODULES__
-from pyuiauto.base.components import UIWindowWrapper, UIButtonWrapper
-from pyuiauto.exceptions import ProcessNotFoundError
-
 # ___MODULES___
+from __future__ import annotations
 import time
 from abc import ABC, abstractmethod
 import logging
 
+# __MY_MODULES__
+from pyuiauto.base.components import UIWindowWrapper, UIButtonWrapper
+from pyuiauto.exceptions import ProcessNotFoundError
+
 
 # ___CLASSES___
+
+class UISystemTrayIconWrapper(ABC):
+    def __init__(self, app: UIApplicationWrapper):
+        self.app = app
+
+    @abstractmethod
+    def __enter__(self) -> UIButtonWrapper:
+        'Using a context manager helps to creates the UIButton dynamically.'
+    @abstractmethod
+    def __exit__(self, *args) -> None:
+        'Using a context manager helps to dynamically tidy any open windows.'
 
 class UIApplicationWrapper(ABC):
     def __init__(self, appName: str, appPath: str = None) -> None:
@@ -74,17 +86,23 @@ class UIApplicationWrapper(ABC):
         This method checks if the application is still running which can help to identify crashes.'''
 
     @abstractmethod
-    def getSystemTrayIcon(self) -> UIButtonWrapper:
-        '''Controller class get system tray icon method\n
-        Returns the system tray icon button component.'''
+    def getSystemTrayIcon(self) -> UISystemtrayIcon:
+        '''Application class get system tray icon method\n
+        Returns the system tray icon button component wrapper.\n
+        (a context manager is required to interact with this component)\n
+        Example:\n
+        with UISystemTrayIcon() as icon:
+            icon.right_click()
+            ...
+        '''
 
     @abstractmethod
     def getCrashReport(self) -> str:
-        '''Controller class get crash report method\n
+        '''Application class get crash report method\n
         Gets all crash reports between the start and end time of the application running.'''
 
     def relaunchApp(self):
-        '''Controller class relaunch app method\n
+        '''Application class relaunch app method\n
         Uses it's context manager __enter__ __exit__ methods to quit and reopen the application.'''
         self.__exit__()
         self.launchApp()

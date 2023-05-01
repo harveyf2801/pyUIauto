@@ -1,8 +1,3 @@
-#___MY_MODULES___
-from pyuiauto.mac.components import UIBaseComponent, UIWindow
-from pyuiauto.base.application import UIApplicationWrapper
-from pyuiauto.exceptions import ElementNotFound, WindowNotFound
-
 #___MODULES___
 from typing import Type
 import os
@@ -13,6 +8,23 @@ try:
         import atomacos
 except ImportError: # requires pip install
         raise ModuleNotFoundError('To install the required modules use pip install atomacos (MacOS ONLY)')
+
+
+#___MY_MODULES___
+from pyuiauto.mac.components import UIBaseComponent, UIWindow, UIButton, UIMenuBarItem
+from pyuiauto.base.application import UIApplicationWrapper, UISystemTrayIconWrapper
+from pyuiauto.exceptions import ElementNotFound, WindowNotFound
+
+
+class UISystemTrayIcon(UISystemTrayIconWrapper):
+    def __init__(self, app: UIApplicationWrapper):
+        super().__init__(app)
+
+    def __enter__(self) -> UIButton:        
+        return UIButton(self.app._findFirstR(control_type=UIMenuBarItem, AXSubrole="AXMenuExtra"))
+    
+    def __exit__(self, *args):
+        pass
 
 #___DEFINING_NATIVE_METHODS___
 
@@ -79,6 +91,9 @@ class UIApplication(UIApplicationWrapper):
     
     def isAppRunning(self):
         return atomacos.NativeUIElement._running_app
+    
+    def getSystemTrayIcon(self):
+        return UISystemTrayIcon(self) # AXSubRole is MacOS ONLY criteria
 
     def getCrashReport(self):
         diagnostic_reports_path = os.path.join(os.path.expanduser('~'), "Library", "Logs", "DiagnosticReports")
