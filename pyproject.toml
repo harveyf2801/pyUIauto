@@ -16,7 +16,7 @@ include = [
 
 [tool.poetry.dependencies]
 python = "^3.9"
-atomacos = {git = "https://github.com/daveenguyen/atomacos.git", platform = "darwin"}
+atomacos = {version = "^3.3.0", platform = "darwin"}
 pywinauto = {version = "^0.6.8", platform = "win32"}
 pyautogui = "0.9.41"
 
