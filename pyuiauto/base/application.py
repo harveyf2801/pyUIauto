@@ -86,15 +86,14 @@ class UIApplicationWrapper(ABC):
         This method checks if the application is still running which can help to identify crashes.'''
 
     @abstractmethod
-    def getSystemTrayIcon(self) -> UISystemtrayIcon:
+    def getSystemTrayIcon(self) -> UISystemTrayIconWrapper:
         '''Application class get system tray icon method\n
         Returns the system tray icon button component wrapper.\n
         (a context manager is required to interact with this component)\n
         Example:\n
         with UISystemTrayIcon() as icon:
             icon.right_click()
-            ...
-        '''
+            ...'''
 
     @abstractmethod
     def getCrashReport(self) -> str:
