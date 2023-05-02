@@ -71,13 +71,13 @@ class UIApplication(UIApplicationWrapper):
                                                     control_type=control_type,
                                                     **options)
 
-    def window(self, timeout: int = 1, retry_interval: float = 0.1, **options) -> UIWindow:
+    def window(self, timeout: int = 1, retry_interval: float = 0.01, **options) -> UIWindow:
         try:
             return self.windows(timeout=timeout, retry_interval=retry_interval, **options)[-1]
         except ElementNotFound:
              raise WindowNotFound
     
-    def windows(self, timeout: int = 1, retry_interval: float = 0.1, **options) -> list[UIWindow]:
+    def windows(self, timeout: int = 1, retry_interval: float = 0.01, **options) -> list[UIWindow]:
         try:
             return self._findAllR(control_type=UIWindow, timeout=timeout, retry_interval=retry_interval, **options)
         except ElementNotFound:

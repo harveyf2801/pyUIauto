@@ -100,7 +100,7 @@ class UIApplication(UIApplicationWrapper):
     def terminateApp(self) -> None:
         self._app.kill()
     
-    def window(self, timeout: int = 1, retry_interval: float = 0.1, **criteria) -> UIWindow:
+    def window(self, timeout: int = 1, retry_interval: float = 0.01, **criteria) -> UIWindow:
         try:
             window = self._app.window(**criteria)
             window.wait('exists', timeout=timeout, retry_interval=retry_interval)
@@ -108,7 +108,7 @@ class UIApplication(UIApplicationWrapper):
         except pywinauto.timings.TimeoutError:
              raise WindowNotFound
     
-    def windows(self, timeout: int = 1, retry_interval: float = 0.1, **criteria) -> list[UIWindow]:
+    def windows(self, timeout: int = 1, retry_interval: float = 0.01, **criteria) -> list[UIWindow]:
         try:
             windows = list(UIWindow(window) for window in self._app.windows(**criteria))
             if len(windows) == 0:

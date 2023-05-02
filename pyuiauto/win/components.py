@@ -108,7 +108,7 @@ class UIBaseComponent(UIBaseComponentWrapper, metaclass=UIBaseComponentMeta):
     def getDescendants(self):
         return list(UIBaseComponent(component) for component in self.component.descendants())
     
-    def _wait_find(self, function, check_function, control_type: Type, timeout: int = 1, retry_interval: float = 0.5, **criteria):
+    def _wait_find(self, function, check_function, control_type: Type, timeout: int = 1, retry_interval: float = 0.01, **criteria):
         timeafter = time.time() + timeout
         while time.time() < timeafter:
             item = function(control_type=control_type.native_control_type, **criteria)
@@ -121,7 +121,7 @@ class UIBaseComponent(UIBaseComponentWrapper, metaclass=UIBaseComponentMeta):
             time.sleep(retry_interval)
         raise ElementNotFound(f"CheckFunction returned: Element - ControlType: {control_type.native_control_type} - {criteria} - not found after {timeout} seconds")
         
-    def findAll(self, control_type: Type, timeout: int = 1, retry_interval: float = 0.5, **criteria):
+    def findAll(self, control_type: Type, timeout: int = 1, retry_interval: float = 0.01, **criteria):
         return self._wait_find(function=self.component.children,
                         check_function=self._check_elements_exist,
                         control_type=control_type,
@@ -129,10 +129,10 @@ class UIBaseComponent(UIBaseComponentWrapper, metaclass=UIBaseComponentMeta):
                         retry_interval=retry_interval,
                         **criteria)
     
-    def findFirst(self, control_type: Type, timeout: int = 1, retry_interval: float = 0.5, **criteria):
+    def findFirst(self, control_type: Type, timeout: int = 1, retry_interval: float = 0.01, **criteria):
         return self.findAll(control_type, timeout, retry_interval, **criteria)[0]
 
-    def find(self, control_type: Type, timeout: int = 1, retry_interval: float = 0.5, **criteria):
+    def find(self, control_type: Type, timeout: int = 1, retry_interval: float = 0.01, **criteria):
         items = self.findAll(control_type, timeout, retry_interval, **criteria)
         
         if len(items) > 1:
@@ -140,7 +140,7 @@ class UIBaseComponent(UIBaseComponentWrapper, metaclass=UIBaseComponentMeta):
 
         return items[0]
     
-    def findAllR(self, control_type: Type, timeout: int = 1, retry_interval: float = 0.5, **criteria):
+    def findAllR(self, control_type: Type, timeout: int = 1, retry_interval: float = 0.01, **criteria):
         return self._wait_find(function=self.component.descendants,
                         check_function=self._check_elements_exist,
                         control_type=control_type,
@@ -148,10 +148,10 @@ class UIBaseComponent(UIBaseComponentWrapper, metaclass=UIBaseComponentMeta):
                         retry_interval=retry_interval,
                         **criteria)
     
-    def findFirstR(self, control_type: Type, timeout: int = 1, retry_interval: float = 0.5, **criteria):
+    def findFirstR(self, control_type: Type, timeout: int = 1, retry_interval: float = 0.01, **criteria):
         return self.findAllR(control_type, timeout, retry_interval, **criteria)[0]
 
-    def findR(self, control_type: Type, timeout: int = 1, retry_interval: float = 0.5, **criteria):
+    def findR(self, control_type: Type, timeout: int = 1, retry_interval: float = 0.01, **criteria):
         items = self.findAllR(control_type, timeout, retry_interval, **criteria)
         
         if len(items) > 1:

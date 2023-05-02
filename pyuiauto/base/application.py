@@ -50,7 +50,7 @@ class UIApplicationWrapper(ABC):
         return self.end_time - self.start_time
     
     @abstractmethod
-    def window(self, timeout: int = 1, retry_interval: float = 0.1, **criteria) -> UIWindowWrapper:
+    def window(self, timeout: int = 1, retry_interval: float = 0.01, **criteria) -> UIWindowWrapper:
         '''Application class window method\n
         Finds a window child component with the specified criteria.
         Raises an exception if the criteria matches no components (recursive).\n
@@ -63,7 +63,7 @@ class UIApplicationWrapper(ABC):
                     component: window component wrapped to it's cross compatible custom wrapper of type UIWindowWrapper'''
     
     @abstractmethod
-    def windows(self, timeout: int = 1, retry_interval: float = 0.1, **criteria) -> list[UIWindowWrapper]:
+    def windows(self, timeout: int = 1, retry_interval: float = 0.01, **criteria) -> list[UIWindowWrapper]:
         '''Application class windows method\n
         Finds all window child components with the specified criteria.
         Raises an exception if the criteria matches > 1 or no components (recursive).\n
