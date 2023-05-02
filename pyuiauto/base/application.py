@@ -5,19 +5,60 @@ from abc import ABC, abstractmethod
 import logging
 
 # __MY_MODULES__
-from pyuiauto.base.components import UIWindowWrapper, UIButtonWrapper
+from pyuiauto.base.components import UIWindowWrapper, UIButtonWrapper, UIMenuItemWrapper
 from pyuiauto.exceptions import ProcessNotFoundError
 
 
 # ___CLASSES___
 
 class UISystemTrayIconWrapper(ABC):
+    '''UISystemTrayIconWrapper\n
+    Provides a system tray icon manager to help find the system tray icon for an application\n
+    whether it be hidden within the notification expand window or on the taskbar.'''
     def __init__(self, app: UIApplicationWrapper):
         self.app = app
 
     @abstractmethod
     def __enter__(self) -> UIButtonWrapper:
         'Using a context manager helps to creates the UIButton dynamically.'
+
+    @abstractmethod
+    def __exit__(self, *args) -> None:
+        'Using a context manager helps to dynamically tidy any open windows.'
+    
+class UIPopupMenuWrapper(ABC):
+    '''UIPopupMenuWrapper\n
+    Provides a popup manager for popup windows to help select specific menu item\n
+    and provides a cleanup of popup windows.\n
+    
+    The popup_naming_scheme can vary from app to app however, these are some examples:\n
+        - *the application name*\n
+        - "Context"
+        - "Pop-up"
+    '''
+    def __init__(self, app: UIApplicationWrapper, popup_naming_scheme: str = None) -> None:
+        self.app = app
+        self.win_name = popup_naming_scheme if popup_naming_scheme else app.appName
+        self.current_popup = None
+        self.steps = 0
+
+    @abstractmethod
+    def getMenuItemFromPath(self, *path: str) -> UIMenuItemWrapper:
+        '''PopupMenu class get menu item from path method\n
+        Uses the specified path to return a menu item component at [-1] index of the path.'''
+    
+    @abstractmethod
+    def back(self):
+        'Go back a popup menu window to the previous item'
+
+    @abstractmethod
+    def backToRoot(self):
+        'Go back to the root popup menu window'
+    
+    @abstractmethod
+    def __enter__(self) -> UIPopupMenuWrapper:
+        'Using a context manager helps to creates the popup windows dynamically.'
+        
     @abstractmethod
     def __exit__(self, *args) -> None:
         'Using a context manager helps to dynamically tidy any open windows.'
@@ -94,6 +135,22 @@ class UIApplicationWrapper(ABC):
         with UISystemTrayIcon() as icon:
             icon.right_click()
             ...'''
+    
+    @abstractmethod
+    def getPopupMenu(self, popup_naming_scheme: str = None) -> UIPopupMenuWrapper:
+        '''Application class get popup menu method\n
+        Returns the popup menu component wrapper.\n
+        (a context manager is required to interact with this component)\n
+        Example:\n
+        with UIPopupMenu() as popup:
+            item = popup.getMenuItemFromPath("Setup", "Set Sample Rate", "96kHz")
+            ...\n
+        
+        The popup_naming_scheme can vary from app to app however, these are some examples:\n
+        - *the application name* (default)
+        - "Context"
+        - "Pop-up"
+        '''
 
     @abstractmethod
     def getCrashReport(self) -> str:

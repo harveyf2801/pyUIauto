@@ -11,10 +11,16 @@ try:
 except ImportError: # requires pip install
         raise ModuleNotFoundError('To install the required modules use pip install pywinauto (Windows ONLY)')
 
+try:
+    from pyautogui import press
+except ImportError: # requires pip install
+        raise ModuleNotFoundError('To install the required modules use pip install pyautogui')
+
+
 #___MY_MODULES___
 from pywinauto.controls.uiawrapper import UIAWrapper
-from pyuiauto.win.components import UIBaseComponent, UIWindow, UIButton
-from pyuiauto.base.application import UIApplicationWrapper, UISystemTrayIconWrapper
+from pyuiauto.win.components import UIBaseComponent, UIWindow, UIButton, UIMenuItem
+from pyuiauto.base.application import UIApplicationWrapper, UISystemTrayIconWrapper, UIPopupMenuWrapper
 from pyuiauto.exceptions import ElementNotFound, WindowNotFound
 
 class UIBackendExplorer():
@@ -70,7 +76,7 @@ class UISystemTrayIcon(UISystemTrayIconWrapper):
     def __closeNotifictionExpand(self) -> None:
         # Close the system tray
         if self.__systrayExpandWindow.is_visible():
-            backendExplorer.taskbarExpand.invoke()
+            backendExplorer.taskbarExpand.invoke() # pyautogui.press("esc") will also work for closing popup menu windows
             self.__systrayExpandWindow.wait_not("visible")
 
     def __enter__(self) -> UIButton:
@@ -86,7 +92,38 @@ class UISystemTrayIcon(UISystemTrayIconWrapper):
         if self._iconHidden:
             self.__closeNotifictionExpand()
 
+class UIPopupMenu(UIPopupMenuWrapper):
+    def __init__(self, app: UIApplicationWrapper, popup_naming_scheme: str) -> None:
+        super().__init__(app, popup_naming_scheme)
+    
+    def getMenuItemFromPath(self, *path: str) -> UIMenuItem:
+        current_item = None
 
+        for count, i in enumerate(path):
+            self.current_popup = self.app.window(title=self.win_name, found_index=0)
+            current_item = self.current_popup.findFirstR(title=i, control_type=UIMenuItem)
+            if count != len(path)-1:
+                current_item.invoke()
+            self.steps += 1
+        
+        return current_item
+
+    def back(self):
+        if self.steps > 0:
+            press("left")
+            self.steps -= 1
+
+    def backToRoot(self):
+        for i in range(self.steps):
+            press("left")
+            self.steps -= 1
+    
+    def __enter__(self) -> UIPopupMenu:
+        return self
+        
+    def __exit__(self, *args) -> None:
+        if self.current_popup.isVisible():
+            press("esc")
 
 #___DEFINING_NATIVE_METHODS___
 class UIApplication(UIApplicationWrapper):
@@ -128,6 +165,9 @@ class UIApplication(UIApplicationWrapper):
 
     def getSystemTrayIcon(self):
         return UISystemTrayIcon(self)
+    
+    def getPopupMenu(self, popup_naming_scheme: str = None):
+        return UIPopupMenu(self, popup_naming_scheme)
     
     def getCrashReport(self):
         # Convert epoch timestamp to a datetime object

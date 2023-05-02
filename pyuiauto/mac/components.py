@@ -193,7 +193,7 @@ class UIBaseComponent(UIBaseComponentWrapper, metaclass=UIBaseComponentMeta):
 # ============================================
 
 
-class UIApplication(UIBaseComponent):
+class UIAppRoot(UIBaseComponent):
     native_control_type: str = "AXApplication"
 
 
