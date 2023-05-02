@@ -1,6 +1,6 @@
 import time
 
-def wait_until_condition(conditional_func, timeout: float = 3, retry_interval: float = 0.1, *func_args, **func_kwargs) -> bool:
+def wait_until_condition(conditional_func, timeout: float = 3, retry_interval: float = 0.01, *func_args, **func_kwargs) -> bool:
     '''Wait until condition function\n
     Returns True if the conditional function returns a value that is True before the Timeout is reached.\n
     However, returns False if the conditional function doesn't return a value that is True before the Timeout is reached.\n
@@ -22,7 +22,7 @@ def wait_until_condition(conditional_func, timeout: float = 3, retry_interval: f
         time.sleep(retry_interval)
     return False
 
-def wait_until_raise(conditional_func, error: Exception = TimeoutError(), timeout: float = 3, retry_interval: float = 0.1, *func_args, **func_kwargs):
+def wait_until_raise(conditional_func, error: Exception = TimeoutError(), timeout: float = 3, retry_interval: float = 0.01, *func_args, **func_kwargs):
     '''Wait until raise function\n
     Returns the value if the conditional function returns a value that is True before the Timeout is reached.\n
     However, raises an error if the conditional function doesn't return a value that is True before the Timeout is reached.\n

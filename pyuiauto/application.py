@@ -8,3 +8,4 @@ elif system() == "Windows":
 
 else:
     raise OSError("The current OS isn't supported with this framework")
+

@@ -157,7 +157,7 @@ class UIBaseComponentWrapper(object, metaclass=UIBaseComponentWrapperMeta):
         raise NotImplementedError
 
     @abstractmethod
-    def findAll(self, control_type: Type, timeout: int = 1, retry_interval: float = 0.5, **criteria) -> list[UIBaseComponentWrapper]:
+    def findAll(self, control_type: Type, timeout: int = 1, retry_interval: float = 0.01, **criteria) -> list[UIBaseComponentWrapper]:
         '''Standard base class find all method\n
         Gets all of the components children with the specified criteria.
         Raises an exception if the criteria matches no components (pre order traversal, non recursive).\n
@@ -173,7 +173,7 @@ class UIBaseComponentWrapper(object, metaclass=UIBaseComponentWrapperMeta):
         raise NotImplementedError
     
     @abstractmethod
-    def findFirst(self, control_type: Type, timeout: int = 1, retry_interval: float = 0.5, **criteria) -> UIBaseComponentWrapper:
+    def findFirst(self, control_type: Type, timeout: int = 1, retry_interval: float = 0.01, **criteria) -> UIBaseComponentWrapper:
         '''Standard base class find first method\n
         Gets the first child component with the specified criteria.
         Raises an exception if the criteria matches no components (pre order traversal, non recursive).\n
@@ -189,7 +189,7 @@ class UIBaseComponentWrapper(object, metaclass=UIBaseComponentWrapperMeta):
         raise NotImplementedError
     
     @abstractmethod
-    def findAllR(self, control_type: Type, timeout: int = 1, retry_interval: float = 0.5, **criteria) -> list[UIBaseComponentWrapper]:
+    def findAllR(self, control_type: Type, timeout: int = 1, retry_interval: float = 0.01, **criteria) -> list[UIBaseComponentWrapper]:
         '''Standard base class find all recursive method\n
         Gets all of the components children with the specified criteria.
         Raises an exception if the criteria matches no components (pre order traversal, recursive).\n
@@ -205,7 +205,7 @@ class UIBaseComponentWrapper(object, metaclass=UIBaseComponentWrapperMeta):
         raise NotImplementedError
     
     @abstractmethod
-    def findFirstR(self, control_type: Type, timeout: int = 1, retry_interval: float = 0.5, **criteria) -> UIBaseComponentWrapper:
+    def findFirstR(self, control_type: Type, timeout: int = 1, retry_interval: float = 0.01, **criteria) -> UIBaseComponentWrapper:
         '''Standard base class find first recursive method\n
         Gets the first child component with the specified criteria.
         Raises an exception if the criteria matches no components (pre order traversal, recursive).\n
@@ -221,7 +221,7 @@ class UIBaseComponentWrapper(object, metaclass=UIBaseComponentWrapperMeta):
         raise NotImplementedError
     
     @abstractmethod
-    def find(self, control_type: Type, timeout: int = 1, retry_interval: float = 0.5, **criteria) -> UIBaseComponentWrapper:
+    def find(self, control_type: Type, timeout: int = 1, retry_interval: float = 0.01, **criteria) -> UIBaseComponentWrapper:
         '''Standard base class find method\n
         Finds a child component with the specified criteria.
         Raises an exception if the criteria matches > 1 or no components (non recursive).\n
@@ -237,7 +237,7 @@ class UIBaseComponentWrapper(object, metaclass=UIBaseComponentWrapperMeta):
         raise NotImplementedError
 
     @abstractmethod
-    def findR(self, control_type: Type, timeout: int = 1, retry_interval: float = 0.5, **criteria) -> UIBaseComponentWrapper:
+    def findR(self, control_type: Type, timeout: int = 1, retry_interval: float = 0.01, **criteria) -> UIBaseComponentWrapper:
         '''Standard base class find recursive method\n
         Finds a child component with the specified criteria.
         Raises an exception if the criteria matches > 1 or no components (recursive).\n

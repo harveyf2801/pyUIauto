@@ -1,16 +1,30 @@
-#___MY_MODULES___
-from pyuiauto.mac.components import UIBaseComponent, UIWindow
-from pyuiauto.base.application import UIApplicationWrapper
-from pyuiauto.exceptions import ElementNotFound, WindowNotFound
-
 #___MODULES___
 from typing import Type
+import os
+import datetime
 
 # pip installed modules
 try:
         import atomacos
 except ImportError: # requires pip install
         raise ModuleNotFoundError('To install the required modules use pip install atomacos (MacOS ONLY)')
+
+
+#___MY_MODULES___
+from pyuiauto.mac.components import UIBaseComponent, UIWindow, UIButton, UIMenuBarItem
+from pyuiauto.base.application import UIApplicationWrapper, UISystemTrayIconWrapper
+from pyuiauto.exceptions import ElementNotFound, WindowNotFound
+
+
+class UISystemTrayIcon(UISystemTrayIconWrapper):
+    def __init__(self, app: UIApplicationWrapper):
+        super().__init__(app)
+
+    def __enter__(self) -> UIButton:        
+        return UIButton(self.app._findFirstR(control_type=UIMenuBarItem, AXSubrole="AXMenuExtra"))
+    
+    def __exit__(self, *args):
+        pass
 
 #___DEFINING_NATIVE_METHODS___
 
@@ -57,13 +71,13 @@ class UIApplication(UIApplicationWrapper):
                                                     control_type=control_type,
                                                     **options)
 
-    def window(self, timeout: int = 1, retry_interval: float = 0.1, **options) -> UIWindow:
+    def window(self, timeout: int = 1, retry_interval: float = 0.01, **options) -> UIWindow:
         try:
             return self.windows(timeout=timeout, retry_interval=retry_interval, **options)[-1]
         except ElementNotFound:
              raise WindowNotFound
     
-    def windows(self, timeout: int = 1, retry_interval: float = 0.1, **options) -> list[UIWindow]:
+    def windows(self, timeout: int = 1, retry_interval: float = 0.01, **options) -> list[UIWindow]:
         try:
             return self._findAllR(control_type=UIWindow, timeout=timeout, retry_interval=retry_interval, **options)
         except ElementNotFound:
@@ -77,3 +91,26 @@ class UIApplication(UIApplicationWrapper):
     
     def isAppRunning(self):
         return atomacos.NativeUIElement._running_app
+    
+    def getSystemTrayIcon(self):
+        return UISystemTrayIcon(self) # AXSubRole is MacOS ONLY criteria
+
+    def getCrashReport(self):
+        diagnostic_reports_path = os.path.join(os.path.expanduser('~'), "Library", "Logs", "DiagnosticReports")
+
+        for file in os.listdir(diagnostic_reports_path):
+            if file.endswith(".ips"):
+                app, year, month, date, time_ = file.split("-")
+                time_ = time_.split(".")[0]
+
+                if app == self.appName:
+
+                    file_time = datetime.datetime(int(year), int(month), int(date), int(time_[:2]), int(time_[2:4]), int(time_[4:]))
+                    start_time = datetime.datetime.fromtimestamp(self.start_time)
+                    end_time = datetime.datetime.fromtimestamp(self.end_time)
+                    
+                    print(f"Start Time: {start_time}, End Time: {end_time}, File Time: {file_time}")
+                    
+                    
+                    if ( (start_time <= file_time) and (end_time >= file_time) ):
+                        return os.path.join(diagnostic_reports_path, file)

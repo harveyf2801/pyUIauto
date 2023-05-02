@@ -106,7 +106,7 @@ class UIBaseComponent(UIBaseComponentWrapper, metaclass=UIBaseComponentMeta):
     
     getDescendants = getChildren
     
-    def _wait_find(self, function, check_function, control_type: Type, timeout: int = 1, retry_interval: float = 0.1, **criteria):
+    def _wait_find(self, function, check_function, control_type: Type, timeout: int = 1, retry_interval: float = 0.01, **criteria):
         for i in (  {"conversion": "title", "apple": "AXTitle"},
                     {"conversion": "description", "apple": "AXDescription"},
                 ):
@@ -127,7 +127,7 @@ class UIBaseComponent(UIBaseComponentWrapper, metaclass=UIBaseComponentMeta):
             time.sleep(retry_interval)
         raise ElementNotFound(f"Element - ControlType: {control_type.native_control_type} - {criteria} - not found after {timeout} seconds")
 
-    def findFirst(self, control_type: Type, timeout: int = 1, retry_interval: float = 0.5, **criteria):
+    def findFirst(self, control_type: Type, timeout: int = 1, retry_interval: float = 0.01, **criteria):
         return self._wait_find(function=self.component.findFirst,
                                 check_function=self._check_element_exists,
                                 control_type=control_type,
@@ -135,7 +135,7 @@ class UIBaseComponent(UIBaseComponentWrapper, metaclass=UIBaseComponentMeta):
                                 retry_interval = retry_interval,
                                 **criteria)
 
-    def findAll(self, control_type: Type, timeout: int = 1, retry_interval: float = 0.5, **criteria):
+    def findAll(self, control_type: Type, timeout: int = 1, retry_interval: float = 0.01, **criteria):
         return self._wait_find(function=self.component.findAll,
                                 check_function=self._check_elements_exist,
                                 control_type=control_type,
@@ -143,7 +143,7 @@ class UIBaseComponent(UIBaseComponentWrapper, metaclass=UIBaseComponentMeta):
                                 retry_interval = retry_interval,
                                 **criteria)
 
-    def findFirstR(self, control_type: Type, timeout: int = 1, retry_interval: float = 0.5, **criteria):
+    def findFirstR(self, control_type: Type, timeout: int = 1, retry_interval: float = 0.01, **criteria):
         return self._wait_find(function=self.component.findFirstR,
                                 check_function=self._check_element_exists,
                                 control_type=control_type,
@@ -151,7 +151,7 @@ class UIBaseComponent(UIBaseComponentWrapper, metaclass=UIBaseComponentMeta):
                                 retry_interval = retry_interval,
                                 **criteria)
 
-    def findAllR(self, control_type: Type, timeout: int = 1, retry_interval: float = 0.5, **criteria):
+    def findAllR(self, control_type: Type, timeout: int = 1, retry_interval: float = 0.01, **criteria):
         return self._wait_find(function=self.component.findAllR,
                                 check_function=self._check_elements_exist,
                                 control_type=control_type,
@@ -159,7 +159,7 @@ class UIBaseComponent(UIBaseComponentWrapper, metaclass=UIBaseComponentMeta):
                                 retry_interval = retry_interval,
                                 **criteria)
     
-    def find(self, control_type: Type, timeout: int = 1, retry_interval: float = 0.5, **criteria):
+    def find(self, control_type: Type, timeout: int = 1, retry_interval: float = 0.01, **criteria):
         items = self.findAll(control_type, timeout, retry_interval, **criteria)
         
         if len(items) > 1:
@@ -167,7 +167,7 @@ class UIBaseComponent(UIBaseComponentWrapper, metaclass=UIBaseComponentMeta):
 
         return items[0]
     
-    def findR(self, control_type: Type, timeout: int = 1, retry_interval: float = 0.5, **criteria):
+    def findR(self, control_type: Type, timeout: int = 1, retry_interval: float = 0.01, **criteria):
         items = self.findAllR(control_type, timeout, retry_interval, **criteria)
         
         if len(items) > 1:
