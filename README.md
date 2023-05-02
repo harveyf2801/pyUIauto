@@ -76,6 +76,8 @@ ex. [pyAutoGUI](https://github.com/asweigart/pyautogui)
 
 - 0.1
   - Initial Release
+  - 0.1.1
+    - Added UISystemTrayIcon and UIPopupMenu manager
 
 ## Acknowledgments
 
