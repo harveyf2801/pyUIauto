@@ -85,8 +85,7 @@ ex. [pyAutoGUI](https://github.com/asweigart/pyautogui)
   - Initial Release
   - 0.1.1
     - Added UISystemTrayIcon and UIPopupMenu manager
-  - 0.1.2
-  - 0.1.3
+  - 0.1.4
     - Fixed some issues with setValue() method on buttons and menus
 
 ## Acknowledgments

@@ -200,7 +200,7 @@ class UIAppRoot(UIBaseComponent):
 # ============================================
 
 
-class UIButton(UIBaseComponent, UIButtonWrapper):
+class UIButton(UIButtonWrapper, UIBaseComponent):
     native_control_type: str = "AXButton"
     
     def press(self):
@@ -209,22 +209,22 @@ class UIButton(UIBaseComponent, UIButtonWrapper):
     def setValue(self, value):
         return super().setValue(value)
 
-class UIRadioButton(UIBaseComponent, UIRadioButtonWrapper):
+class UIRadioButton(UIRadioButtonWrapper, UIBaseComponent):
     native_control_type: str = "AXRadioButton"
 
-class UIText(UIBaseComponent, UITextWrapper):
+class UIText(UITextWrapper, UIBaseComponent):
     native_control_type: str = "AXText"
 
-class UISlider(UIBaseComponent, UISliderWrapper):
+class UISlider(UISliderWrapper, UIBaseComponent):
     native_control_type: str = "AXSlider"
 
-class UIEdit(UIBaseComponent, UIEditWrapper):
+class UIEdit(UIEditWrapper, UIBaseComponent):
     native_control_type: str = "AXTextArea"
 
-class UIMenu(UIBaseComponent, UIMenuWrapper):
+class UIMenu(UIMenuWrapper, UIBaseComponent):
     native_control_type: str = "AXMenu"
 
-class UIMenuItem(UIBaseComponent, UIMenuItemWrapper):
+class UIMenuItem(UIMenuItemWrapper, UIBaseComponent):
     native_control_type: str = "AXMenuItem"
 
     def select(self):
@@ -233,7 +233,7 @@ class UIMenuItem(UIBaseComponent, UIMenuItemWrapper):
     def setValue(self, value):
         return super().setValue(value)
 
-class UIWindow(UIBaseComponent, UIWindowWrapper):
+class UIWindow(UIWindowWrapper, UIBaseComponent):
     native_control_type: str = "AXWindow"
 
     def moveResize(self, x=None, y=None, width=None, height=None):
@@ -267,22 +267,22 @@ class UIWindow(UIBaseComponent, UIWindowWrapper):
     def close(self):
         self.component.AXCloseButton.Press()
 
-class UIGroup(UIBaseComponent, UIGroupWrapper):
+class UIGroup(UIGroupWrapper, UIBaseComponent):
     name="AXGroup"
 
-class UIStaticText(UIBaseComponent, UIStaticTextWrapper):
+class UIStaticText(UIStaticTextWrapper, UIBaseComponent):
     name="AXStaticText"
 
-class UITitleBar(UIBaseComponent, UITitleBarWrapper):
+class UITitleBar(UITitleBarWrapper, UIBaseComponent):
     name="AXTitleBar"
 
-class UIMenuBar(UIBaseComponent, UIMenuBarWrapper):
+class UIMenuBar(UIMenuBarWrapper, UIBaseComponent):
     native_control_type: str = "AXMenuBar"
 
-class UIProgressBar(UIBaseComponent):
+class UIProgressBar(UIBaseComponent, UIBaseComponent):
     native_control_type: str = "AXProgressIndicator"
 
 # !!! Mac Specific !!!
 
-class UIMenuBarItem(UIBaseComponent, UIMenuItemWrapper):
+class UIMenuBarItem(UIMenuItemWrapper, UIBaseComponent):
     native_control_type: str = "AXMenuBarItem"

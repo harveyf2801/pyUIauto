@@ -175,7 +175,7 @@ class UIBaseComponent(UIBaseComponentWrapper, metaclass=UIBaseComponentMeta):
     
     
 
-class UIButton(UIBaseComponent, UIButtonWrapper):
+class UIButton(UIButtonWrapper, UIBaseComponent):
     native_control_type: str = "Button"
 
     def getValue(self):
@@ -187,18 +187,18 @@ class UIButton(UIBaseComponent, UIButtonWrapper):
     def setValue(self, value):
         return super().setValue(value)
 
-class UIRadioButton(UIBaseComponent, UIRadioButtonWrapper):
+class UIRadioButton(UIRadioButtonWrapper, UIBaseComponent):
     native_control_type: str = "RadioButton"
 
-class UIText(UIBaseComponent, UITextWrapper):
+class UIText(UITextWrapper, UIBaseComponent):
     native_control_type: str = "Text"
-class UISlider(UIBaseComponent, UISliderWrapper):
+class UISlider(UISliderWrapper, UIBaseComponent):
     native_control_type: str = "Slider"
 
     def getValue(self):
         return self.component.value()
 
-class UIEdit(UIBaseComponent, UIEditWrapper):
+class UIEdit(UIEditWrapper, UIBaseComponent):
     native_control_type: str = "Edit"
 
     def getValue(self):
@@ -209,9 +209,9 @@ class UIEdit(UIBaseComponent, UIEditWrapper):
         self.component.invoke()
         send_keys(str(value) + "{ENTER}")
 
-class UIMenu(UIBaseComponent, UIMenuWrapper):
+class UIMenu(UIMenuWrapper, UIBaseComponent):
     native_control_type: str = "Menu"
-class UIMenuItem(UIBaseComponent, UIMenuItemWrapper):
+class UIMenuItem(UIMenuItemWrapper, UIBaseComponent):
     native_control_type: str = "MenuItem"
 
     def getValue(self):
@@ -226,7 +226,7 @@ class UIMenuItem(UIBaseComponent, UIMenuItemWrapper):
     def setValue(self, value):
         return super().setValue(value)
 
-class UIWindow(UIBaseComponent, UIWindowWrapper):
+class UIWindow(UIWindowWrapper, UIBaseComponent):
     native_control_type: str = "Window"
     
     def moveResize(self, x=None, y=None, width=None, height=None):
@@ -255,22 +255,22 @@ class UIWindow(UIBaseComponent, UIWindowWrapper):
     def close(self):
         self.component.close()
 
-class UIGroup(UIBaseComponent, UIGroupWrapper):
+class UIGroup(UIGroupWrapper, UIBaseComponent):
     name="Custom"
 
-class UIStaticText(UIBaseComponent, UIStaticTextWrapper):
+class UIStaticText(UIStaticTextWrapper, UIBaseComponent):
     name="Text"
 
     def getValue(self):
         return self.component.window_text()
 
-class UITitleBar(UIBaseComponent, UITitleBarWrapper):
+class UITitleBar(UITitleBarWrapper, UIBaseComponent):
     name="TitleBar"
         
-class UIMenuBar(UIBaseComponent, UIMenuBarWrapper):
+class UIMenuBar(UIMenuBarWrapper, UIBaseComponent):
     name="MenuBar"
 
-class UIProgressBar(UIBaseComponent, UIProgressBarWrapper):
+class UIProgressBar(UIProgressBarWrapper, UIBaseComponent):
     name="ProgressBar"
 
     def getValue(self):
@@ -278,4 +278,4 @@ class UIProgressBar(UIBaseComponent, UIProgressBarWrapper):
 
 # !!! Mac Specific !!!
 
-class UIMenuBarItem(UIMenuItem): ...
+class UIMenuBarItem(UIMenuItem, UIBaseComponent): ...
