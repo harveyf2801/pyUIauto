@@ -313,7 +313,8 @@ class UIButtonWrapper():
         (overrides the setValue method)'''
         return self.press() if self.getValue() != value else None
 
-    setValue = toggle
+    def setValue(self, value):
+        return self.toggle(value)
 
 class UIRadioButtonWrapper(): ...
 
@@ -330,7 +331,8 @@ class UIMenuItemWrapper():
         '''Menu item select method\n
         Similar to the invoke method, selects a menu item without actual mouse movement.'''
     
-    invoke = select
+    def invoke(self):
+        return self.select()
 
     def toggle(self, value) -> bool:
         '''Menu item toggle method\n
@@ -342,7 +344,8 @@ class UIMenuItemWrapper():
         else:
             return False
     
-    setValue = toggle
+    def setValue(self, value):
+        return self.toggle(value)
 
 class UIWindowWrapper():
     @abstractmethod

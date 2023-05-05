@@ -164,7 +164,7 @@ class UIApplicationWrapper(ABC):
         self.launchApp()
         self.__enter__()
 
-    def __enter__(self):
+    def __enter__(self) -> UIApplicationWrapper:
         self.launchApp()
         self.connectApp()
         return self
