@@ -183,6 +183,9 @@ class UIButton(UIBaseComponent, UIButtonWrapper):
     
     def press(self):
         self.component.click()
+    
+    def setValue(self, value):
+        return super().setValue(value)
 
 class UIRadioButton(UIBaseComponent, UIRadioButtonWrapper):
     native_control_type: str = "RadioButton"
@@ -219,6 +222,9 @@ class UIMenuItem(UIBaseComponent, UIMenuItemWrapper):
 
     def select(self):
         self.component.select()
+    
+    def setValue(self, value):
+        return super().setValue(value)
 
 class UIWindow(UIBaseComponent, UIWindowWrapper):
     native_control_type: str = "Window"
