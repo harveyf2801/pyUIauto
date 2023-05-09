@@ -152,6 +152,18 @@ class UIApplicationWrapper(ABC):
         - "Pop-up"
         '''
 
+    def systemTrayPopupPath(self, *path: str):
+        '''Application class system tray method\n
+        This method checks if the application is still running which can help to identify crashes.'''
+        with self.getSystemTrayIcon() as icon:
+            icon.right_click()
+            with self.getPopupMenu() as popup:
+                    try:
+                            show_item = popup.getMenuItemFromPath(*path)
+                            show_item.click()
+                    except:
+                            logging.warning(f"{path} is disabled or not available")
+
     @abstractmethod
     def getCrashReport(self) -> str:
         '''Application class get crash report method\n
