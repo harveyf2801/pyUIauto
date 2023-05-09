@@ -194,14 +194,20 @@ class UIBaseComponent(UIBaseComponentWrapper, metaclass=UIBaseComponentMeta):
 
 
 class UIAppRoot(UIBaseComponent):
-    native_control_type: str = "AXApplication"
+    @classmethod
+    @property
+    def native_control_type(cls) -> str:
+        return "AXApplication"
 
 
 # ============================================
 
 
 class UIButton(UIButtonWrapper, UIBaseComponent):
-    native_control_type: str = "AXButton"
+    @classmethod
+    @property
+    def native_control_type(cls) -> str:
+        return "AXButton"
     
     def press(self):
         self.invoke()
@@ -210,22 +216,40 @@ class UIButton(UIButtonWrapper, UIBaseComponent):
         return super().setValue(value)
 
 class UIRadioButton(UIRadioButtonWrapper, UIBaseComponent):
-    native_control_type: str = "AXRadioButton"
+    @classmethod
+    @property
+    def native_control_type(cls) -> str:
+        return "AXRadioButton"
 
 class UIText(UITextWrapper, UIBaseComponent):
-    native_control_type: str = "AXText"
+    @classmethod
+    @property
+    def native_control_type(cls) -> str:
+        return "AXText"
 
 class UISlider(UISliderWrapper, UIBaseComponent):
-    native_control_type: str = "AXSlider"
+    @classmethod
+    @property
+    def native_control_type(cls) -> str:
+        return "AXSlider"
 
 class UIEdit(UIEditWrapper, UIBaseComponent):
-    native_control_type: str = "AXTextArea"
+    @classmethod
+    @property
+    def native_control_type(cls) -> str:
+        return "AXTextArea"
 
 class UIMenu(UIMenuWrapper, UIBaseComponent):
-    native_control_type: str = "AXMenu"
+    @classmethod
+    @property
+    def native_control_type(cls) -> str:
+        return "AXMenu"
 
 class UIMenuItem(UIMenuItemWrapper, UIBaseComponent):
-    native_control_type: str = "AXMenuItem"
+    @classmethod
+    @property
+    def native_control_type(cls) -> str:
+        return "AXMenuItem"
 
     def select(self):
         self.invoke()
@@ -234,7 +258,10 @@ class UIMenuItem(UIMenuItemWrapper, UIBaseComponent):
         return super().setValue(value)
 
 class UIWindow(UIWindowWrapper, UIBaseComponent):
-    native_control_type: str = "AXWindow"
+    @classmethod
+    @property
+    def native_control_type(cls) -> str:
+        return "AXWindow"
 
     def moveResize(self, x=None, y=None, width=None, height=None):
         left, top, _, _ = self.getCoordinates()
@@ -268,21 +295,39 @@ class UIWindow(UIWindowWrapper, UIBaseComponent):
         self.component.AXCloseButton.Press()
 
 class UIGroup(UIGroupWrapper, UIBaseComponent):
-    name="AXGroup"
+    @classmethod
+    @property
+    def native_control_type(cls) -> str:
+        return "AXGroup"
 
 class UIStaticText(UIStaticTextWrapper, UIBaseComponent):
-    name="AXStaticText"
+    @classmethod
+    @property
+    def native_control_type(cls) -> str:
+        return "AXStaticText"
 
 class UITitleBar(UITitleBarWrapper, UIBaseComponent):
-    name="AXTitleBar"
+    @classmethod
+    @property
+    def native_control_type(cls) -> str:
+        return "AXTitleBar"
 
 class UIMenuBar(UIMenuBarWrapper, UIBaseComponent):
-    native_control_type: str = "AXMenuBar"
+    @classmethod
+    @property
+    def native_control_type(cls) -> str:
+        return "AXMenuBar"
 
 class UIProgressBar(UIBaseComponent, UIBaseComponent):
-    native_control_type: str = "AXProgressIndicator"
+    @classmethod
+    @property
+    def native_control_type(cls) -> str:
+        return "AXProgressIndicator"
 
 # !!! Mac Specific !!!
 
 class UIMenuBarItem(UIMenuItemWrapper, UIBaseComponent):
-    native_control_type: str = "AXMenuBarItem"
+    @classmethod
+    @property
+    def native_control_type(cls) -> str:
+        return "AXMenuBarItem"
