@@ -188,18 +188,31 @@ class UIButton(UIButtonWrapper, UIBaseComponent):
         return super().setValue(value)
 
 class UIRadioButton(UIRadioButtonWrapper, UIBaseComponent):
-    native_control_type: str = "RadioButton"
+    @classmethod
+    @property
+    def native_control_type(cls) -> str:
+        return "RadioButton"
 
 class UIText(UITextWrapper, UIBaseComponent):
-    native_control_type: str = "Text"
+    @classmethod
+    @property
+    def native_control_type(cls) -> str:
+        return "Text"
+    
 class UISlider(UISliderWrapper, UIBaseComponent):
-    native_control_type: str = "Slider"
+    @classmethod
+    @property
+    def native_control_type(cls) -> str:
+        return "Slider"
 
     def getValue(self):
         return self.component.value()
 
 class UIEdit(UIEditWrapper, UIBaseComponent):
-    native_control_type: str = "Edit"
+    @classmethod
+    @property
+    def native_control_type(cls) -> str:
+        return "Edit"
 
     def getValue(self):
         return self.component.get_value()
@@ -210,9 +223,16 @@ class UIEdit(UIEditWrapper, UIBaseComponent):
         send_keys(str(value) + "{ENTER}")
 
 class UIMenu(UIMenuWrapper, UIBaseComponent):
-    native_control_type: str = "Menu"
+    @classmethod
+    @property
+    def native_control_type(cls) -> str:
+        return "Menu"
+    
 class UIMenuItem(UIMenuItemWrapper, UIBaseComponent):
-    native_control_type: str = "MenuItem"
+    @classmethod
+    @property
+    def native_control_type(cls) -> str:
+        return "MenuItem"
 
     def getValue(self):
         try:
@@ -227,7 +247,10 @@ class UIMenuItem(UIMenuItemWrapper, UIBaseComponent):
         return super().setValue(value)
 
 class UIWindow(UIWindowWrapper, UIBaseComponent):
-    native_control_type: str = "Window"
+    @classmethod
+    @property
+    def native_control_type(cls) -> str:
+        return "Window"
     
     def moveResize(self, x=None, y=None, width=None, height=None):
         cur_rect = self.component.rectangle()
@@ -256,22 +279,37 @@ class UIWindow(UIWindowWrapper, UIBaseComponent):
         self.component.close()
 
 class UIGroup(UIGroupWrapper, UIBaseComponent):
-    name="Custom"
+    @classmethod
+    @property
+    def native_control_type(cls) -> str:
+        return "Custom"
 
 class UIStaticText(UIStaticTextWrapper, UIBaseComponent):
-    name="Text"
+    @classmethod
+    @property
+    def native_control_type(cls) -> str:
+        return "Text"
 
     def getValue(self):
         return self.component.window_text()
 
 class UITitleBar(UITitleBarWrapper, UIBaseComponent):
-    name="TitleBar"
+    @classmethod
+    @property
+    def native_control_type(cls) -> str:
+        return "TitleBar"
         
 class UIMenuBar(UIMenuBarWrapper, UIBaseComponent):
-    name="MenuBar"
+    @classmethod
+    @property
+    def native_control_type(cls) -> str:
+        return "MenuBar"
 
 class UIProgressBar(UIProgressBarWrapper, UIBaseComponent):
-    name="ProgressBar"
+    @classmethod
+    @property
+    def native_control_type(cls) -> str:
+        return "ProgressBar"
 
     def getValue(self):
         return int(self.component.legacy_properties()['Value'])

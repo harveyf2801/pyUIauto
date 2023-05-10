@@ -3,6 +3,7 @@ from __future__ import annotations
 from typing import Type
 import datetime
 import subprocess
+import logging
 
 # pip installed modules
 try:
@@ -51,7 +52,10 @@ class UISystemTrayIcon(UISystemTrayIconWrapper):
                 self._iconHidden = True
     
     def _getIcon(self, parent: pywinauto.WindowSpecification) -> UIButton:
-        return UIButton(parent.child_window(title_re=f".*of.*{self.app.appName}", control_type="Button", found_index=0).wrapper_object())
+        icon = parent.child_window(title_re=f".* {self.app.appName}", control_type="Button", found_index=0)
+        icon.wait('exists', timeout=2)
+        icon.wrapper_object()
+        return UIButton(icon)
 
     def __openSystemTrayExpand(self) -> pywinauto.WindowSpecification:
         # Open the system tray
@@ -163,10 +167,10 @@ class UIApplication(UIApplicationWrapper):
     def isAppRunning(self):
         return self._app.is_process_running()
 
-    def getSystemTrayIcon(self):
+    def getSystemTrayIcon(self) -> UISystemTrayIcon:
         return UISystemTrayIcon(self)
     
-    def getPopupMenu(self, popup_naming_scheme: str = None):
+    def getPopupMenu(self, popup_naming_scheme: str = None) -> UIPopupMenu:
         return UIPopupMenu(self, popup_naming_scheme)
     
     def getCrashReport(self):
