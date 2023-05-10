@@ -2,6 +2,7 @@
 from typing import Type
 import os
 import datetime
+import logging
 
 # pip installed modules
 try:
@@ -109,7 +110,7 @@ class UIApplication(UIApplicationWrapper):
                     start_time = datetime.datetime.fromtimestamp(self.start_time)
                     end_time = datetime.datetime.fromtimestamp(self.end_time)
                     
-                    print(f"Start Time: {start_time}, End Time: {end_time}, File Time: {file_time}")
+                    logging.debug(f"Start Time: {start_time}, End Time: {end_time}, File Time: {file_time}")
                     
                     
                     if ( (start_time <= file_time) and (end_time >= file_time) ):

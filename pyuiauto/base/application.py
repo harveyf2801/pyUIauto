@@ -3,9 +3,10 @@ from __future__ import annotations
 import time
 from abc import ABC, abstractmethod
 import logging
+import contextlib
 
 # __MY_MODULES__
-from pyuiauto.base.components import UIWindowWrapper, UIButtonWrapper, UIMenuItemWrapper
+from pyuiauto.components import UIWindow, UIButton, UIMenuItem, UIMenuBarItem
 from pyuiauto.exceptions import ProcessNotFoundError
 
 
@@ -19,7 +20,7 @@ class UISystemTrayIconWrapper(ABC):
         self.app = app
 
     @abstractmethod
-    def __enter__(self) -> UIButtonWrapper:
+    def __enter__(self) -> UIButton:
         'Using a context manager helps to creates the UIButton dynamically.'
 
     @abstractmethod
@@ -43,7 +44,7 @@ class UIPopupMenuWrapper(ABC):
         self.steps = 0
 
     @abstractmethod
-    def getMenuItemFromPath(self, *path: str) -> UIMenuItemWrapper:
+    def getMenuItemFromPath(self, *path: str) -> UIMenuItem:
         '''PopupMenu class get menu item from path method\n
         Uses the specified path to return a menu item component at [-1] index of the path.'''
     
@@ -91,7 +92,7 @@ class UIApplicationWrapper(ABC):
         return self.end_time - self.start_time
     
     @abstractmethod
-    def window(self, timeout: int = 1, retry_interval: float = 0.01, **criteria) -> UIWindowWrapper:
+    def window(self, timeout: int = 1, retry_interval: float = 0.01, **criteria) -> UIWindow:
         '''Application class window method\n
         Finds a window child component with the specified criteria.
         Raises an exception if the criteria matches no components (recursive).\n
@@ -104,7 +105,7 @@ class UIApplicationWrapper(ABC):
                     component: window component wrapped to it's cross compatible custom wrapper of type UIWindowWrapper'''
     
     @abstractmethod
-    def windows(self, timeout: int = 1, retry_interval: float = 0.01, **criteria) -> list[UIWindowWrapper]:
+    def windows(self, timeout: int = 1, retry_interval: float = 0.01, **criteria) -> list[UIWindow]:
         '''Application class windows method\n
         Finds all window child components with the specified criteria.
         Raises an exception if the criteria matches > 1 or no components (recursive).\n
@@ -152,17 +153,29 @@ class UIApplicationWrapper(ABC):
         - "Pop-up"
         '''
 
-    def systemTrayPopupPath(self, *path: str):
-        '''Application class system tray method\n
-        This method checks if the application is still running which can help to identify crashes.'''
+    @contextlib.contextmanager
+    def systemTrayPopupPath(self, *path: str) -> UIMenuBarItem:
+        '''Application class system tray popup select method\n
+        This method selects menu items after clicking the system tray, from the *args passed in as a path.'''
         with self.getSystemTrayIcon() as icon:
             icon.right_click()
             with self.getPopupMenu() as popup:
-                    try:
-                            show_item = popup.getMenuItemFromPath(*path)
-                            show_item.click()
-                    except:
-                            logging.warning(f"{path} is disabled or not available")
+                try:
+                    yield popup.getMenuItemFromPath(*path)
+                except:
+                    logging.warning(f"{path} is disabled or not available")
+    
+    @contextlib.contextmanager
+    def menuBarPopupPath(self, window: UIWindow, *path: str) -> UIMenuBarItem:
+        '''Application class menu bar select method\n
+        This method selects menu items on the menubar from the *args passed in as a path.'''
+        menuBarItem = window.findFirstR(title=path[0], control_type=UIMenuBarItem)
+        if len(path) == 1:
+            yield menuBarItem
+        
+        menuBarItem.click()
+        with self.getPopupMenu() as popup:
+            yield popup.getMenuItemFromPath(*path[1:])
 
     @abstractmethod
     def getCrashReport(self) -> str:

@@ -3,6 +3,7 @@ from __future__ import annotations
 from typing import Type
 import datetime
 import subprocess
+import logging
 
 # pip installed modules
 try:
@@ -26,13 +27,13 @@ from pyuiauto.exceptions import ElementNotFound, WindowNotFound
 class UIBackendExplorer():
     backend_explorer_app = pywinauto.Application(backend="uia").connect(path="explorer.exe")
     backend_explorer_app = pywinauto.Application(backend="uia").connect(path="explorer.exe")
-    __taskbar: pywinauto.WindowSpecification = backend_explorer_app.window(title="Taskbar", class_name="Shell_TrayWnd")
+    taskbar: pywinauto.WindowSpecification = backend_explorer_app.window(title="Taskbar", class_name="Shell_TrayWnd")
 
     try:
-        taskbarExpand = UIButton(__taskbar.child_window(title="Show Hidden Icons", class_name="SystemTray.NormalButton").wrapper_object())
+        taskbarExpand = UIButton(taskbar.child_window(title="Show Hidden Icons", class_name="SystemTray.NormalButton").wrapper_object())
     except:
         try:
-            taskbarExpand = UIButton(__taskbar.child_window(title="Notification Chevron").wrapper_object())
+            taskbarExpand = UIButton(taskbar.child_window(title="Notification Chevron").wrapper_object())
         except:
             raise ElementNotFound("Show Hidden Icons not found.")
         
@@ -45,13 +46,16 @@ class UISystemTrayIcon(UISystemTrayIconWrapper):
         self._iconHidden = False
         
         try:
-            self._getIcon(backendExplorer.__taskbar)
+            self._getIcon(backendExplorer.taskbar)
         except:
                 self.__systrayExpandWindow = None
                 self._iconHidden = True
     
     def _getIcon(self, parent: pywinauto.WindowSpecification) -> UIButton:
-        return UIButton(parent.child_window(title_re=f".*of.*{self.app.appName}", control_type="Button", found_index=0).wrapper_object())
+        icon = parent.child_window(title_re=f".* {self.app.appName}", control_type="Button", found_index=0)
+        icon.wait('exists', timeout=2)
+        icon.wrapper_object()
+        return UIButton(icon)
 
     def __openSystemTrayExpand(self) -> pywinauto.WindowSpecification:
         # Open the system tray
@@ -86,7 +90,7 @@ class UISystemTrayIcon(UISystemTrayIconWrapper):
                 return self._getIcon(self.__systrayExpandWindow)
             except: raise ElementNotFound("System Tray Icon not found.")
         
-        return self._getIcon(backendExplorer.__taskbar)
+        return self._getIcon(backendExplorer.taskbar)
     
     def __exit__(self, *args):
         if self._iconHidden:
@@ -163,10 +167,10 @@ class UIApplication(UIApplicationWrapper):
     def isAppRunning(self):
         return self._app.is_process_running()
 
-    def getSystemTrayIcon(self):
+    def getSystemTrayIcon(self) -> UISystemTrayIcon:
         return UISystemTrayIcon(self)
     
-    def getPopupMenu(self, popup_naming_scheme: str = None):
+    def getPopupMenu(self, popup_naming_scheme: str = None) -> UIPopupMenu:
         return UIPopupMenu(self, popup_naming_scheme)
     
     def getCrashReport(self):

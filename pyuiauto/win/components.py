@@ -112,9 +112,6 @@ class UIBaseComponent(UIBaseComponentWrapper, metaclass=UIBaseComponentMeta):
         timeafter = time.time() + timeout
         while time.time() < timeafter:
             item = function(control_type=control_type.native_control_type, **criteria)
-            print("#################")
-            print(control_type)
-            print("#################")
             item_check = check_function(item)
             if item_check:
                 if type(item) == list:
