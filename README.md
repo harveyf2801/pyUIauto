@@ -89,6 +89,10 @@ ex. [pyAutoGUI](https://github.com/asweigart/pyautogui)
     - Fixed some issues with setValue() method on buttons and menus
   - 0.1.5
     - Added context managers for better popup menu handling
+  - 0.1.6
+    - Added isOnTop method for components
+    - Fixed isVisible method for components
+    - Added checks for components existing in helper methods
 
 ## Acknowledgments
 
