@@ -7,7 +7,7 @@ import contextlib
 
 # __MY_MODULES__
 from pyuiauto.components import UIWindow, UIButton, UIMenuItem, UIMenuBarItem
-from pyuiauto.exceptions import ProcessNotFoundError
+from pyuiauto.exceptions import ProcessNotFoundError, ElementNotFound
 
 
 # ___CLASSES___
@@ -162,20 +162,24 @@ class UIApplicationWrapper(ABC):
             with self.getPopupMenu() as popup:
                 try:
                     yield popup.getMenuItemFromPath(*path)
-                except:
-                    logging.warning(f"{path} is disabled or not available")
+                except ElementNotFound:
+                    raise ElementNotFound(f"{path} is disabled or not available")
     
     @contextlib.contextmanager
     def menuBarPopupPath(self, window: UIWindow, *path: str) -> UIMenuBarItem:
         '''Application class menu bar select method\n
         This method selects menu items on the menubar from the *args passed in as a path.'''
-        menuBarItem = window.findFirstR(title=path[0], control_type=UIMenuBarItem)
-        if len(path) == 1:
-            yield menuBarItem
+        try:
+            menuBarItem = window.findFirstR(title=path[0], control_type=UIMenuBarItem)
+            if len(path) == 1:
+                yield menuBarItem
+            
+            menuBarItem.click()
+            with self.getPopupMenu() as popup:
+                yield popup.getMenuItemFromPath(*path[1:])
         
-        menuBarItem.click()
-        with self.getPopupMenu() as popup:
-            yield popup.getMenuItemFromPath(*path[1:])
+        except ElementNotFound:
+                    raise ElementNotFound(f"{path} is disabled or not available")
 
     @abstractmethod
     def getCrashReport(self) -> str:
@@ -196,8 +200,8 @@ class UIApplicationWrapper(ABC):
     
     def __exit__(self, *args):
         if not self.isAppRunning():
-            logging.critical(f"The {self.appName} application may have crashed")
-            logging.error(f"Crash report:\n{self.getCrashReport()}")
-            raise ProcessNotFoundError(f"The {self.appName} application was not found in running applications")
+            logging.warning(f"The {self.appName} application may have crashed as it was not found in running applications")
+            # logging.error(f"Crash report:\n{self.getCrashReport()}")
+            # raise ProcessNotFoundError(f"The {self.appName} application was not found in running applications")
         else:
             self.terminateApp()

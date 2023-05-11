@@ -86,10 +86,12 @@ class UIBaseComponent(UIBaseComponentWrapper, metaclass=UIBaseComponentMeta):
     def right_click(self):
         self.component.right_click_input()
     
-    def isVisible(self):
+    def isTopLevel(self):
         x, y, _, _= self.getCoordinates()
-        visible_at_point = self.component.from_point(x, y).element_info.name == self.component.element_info.name
-        return self.component.is_visible() and visible_at_point
+        return self.component.from_point(x, y).element_info.name == self.component.element_info.name
+
+    def isVisible(self):
+        return self.component.is_visible()
     
     def getMidpoint(self):
         return self.component.rectangle().mid_point()
