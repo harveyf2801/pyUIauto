@@ -79,7 +79,7 @@ class UISystemTrayIcon(UISystemTrayIconWrapper):
 
     def __closeNotifictionExpand(self) -> None:
         # Close the system tray
-        if self.__systrayExpandWindow.is_visible():
+        if self.__systrayExpandWindow.exists() and self.__systrayExpandWindow.is_visible():
             backendExplorer.taskbarExpand.invoke() # pyautogui.press("esc") will also work for closing popup menu windows
             self.__systrayExpandWindow.wait_not("visible")
 
