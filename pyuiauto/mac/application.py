@@ -1,8 +1,11 @@
 #___MODULES___
+from __future__ import annotations
 from typing import Type
 import os
 import datetime
 import logging
+import contextlib
+from typing import Union
 
 # pip installed modules
 try:
@@ -10,10 +13,15 @@ try:
 except ImportError: # requires pip install
         raise ModuleNotFoundError('To install the required modules use pip install atomacos (MacOS ONLY)')
 
+try:
+    from pyautogui import press
+except ImportError: # requires pip install
+        raise ModuleNotFoundError('To install the required modules use pip install pyautogui')
+
 
 #___MY_MODULES___
-from pyuiauto.mac.components import UIBaseComponent, UIWindow, UIButton, UIMenuBarItem
-from pyuiauto.base.application import UIApplicationWrapper, UISystemTrayIconWrapper
+from pyuiauto.mac.components import UIBaseComponent, UIWindow, UIButton, UIMenuBarItem, UIMenuItem
+from pyuiauto.base.application import UIApplicationWrapper, UIPopupMenuWrapper, UISystemTrayIconWrapper, UIPopupMenuWrapper
 from pyuiauto.exceptions import ElementNotFound, WindowNotFound
 
 
@@ -21,11 +29,56 @@ class UISystemTrayIcon(UISystemTrayIconWrapper):
     def __init__(self, app: UIApplicationWrapper):
         super().__init__(app)
 
-    def __enter__(self) -> UIButton:        
-        return UIButton(self.app._findFirstR(control_type=UIMenuBarItem, AXSubrole="AXMenuExtra"))
+    def __enter__(self) -> UIMenuBarItem:
+        return self.app._findFirstR(control_type=UIMenuBarItem, AXSubrole="AXMenuExtra")
     
     def __exit__(self, *args):
         pass
+
+class UIPopupMenu(UIPopupMenuWrapper):
+    def __init__(self, app: UIApplicationWrapper, popup_naming_scheme: str = None) -> None:
+        super().__init__(app, popup_naming_scheme)
+
+    def getMenuItemFromPath(self, *path: str) -> UIMenuItem:
+        current_item = None
+
+        for count, i in enumerate(path):
+            self.current_popup = self.app.window(title=self.win_name)
+            current_item = self.current_popup.findFirstR(title=i, control_type=UIMenuItem)
+            if count != len(path)-1:
+                current_item.invoke()
+            self.steps += 1
+        
+        return current_item
+    
+    def _nativeMenuBarItemFromPath(self, *path: str) -> UIMenuBarItem:
+        current_item = None
+
+        for count, i in enumerate(path):
+            current_item = UIMenuItem(self.app._app.menuItem(*path[:count+1]))
+            if count != len(path)-1:
+                current_item.invoke()
+            self.steps += 1
+        
+        return current_item
+        
+    def back(self):
+        if self.steps > 0:
+            press("left")
+            self.steps -= 1
+
+    def backToRoot(self):
+        for i in range(self.steps):
+            press("left")
+            self.steps -= 1
+    
+    def __enter__(self) -> UIPopupMenu:
+        return self
+        
+    def __exit__(self, *args) -> None:
+        if self.current_popup != None and self.current_popup.exists():
+            press("esc")
+
 
 #___DEFINING_NATIVE_METHODS___
 
@@ -115,3 +168,34 @@ class UIApplication(UIApplicationWrapper):
                     
                     if ( (start_time <= file_time) and (end_time >= file_time) ):
                         return os.path.join(diagnostic_reports_path, file)
+
+    def getPopupMenu(self, popup_naming_scheme: str = None) -> UIPopupMenu:
+        return UIPopupMenu(self, popup_naming_scheme)
+    
+    def getSystemTrayIcon(self) -> UISystemTrayIcon:
+        return UISystemTrayIcon(self)
+    
+    @contextlib.contextmanager
+    def systemTrayPopupPath(self, *path: str) -> UIMenuItem:
+        with self.getSystemTrayIcon() as icon:
+            icon.right_click()
+        
+            with self.getPopupMenu() as popup:
+                try:
+
+                    yield popup.getMenuItemFromPath(*path)
+                except ElementNotFound:
+                    raise ElementNotFound(f"{path} is disabled or not available")
+    
+    @contextlib.contextmanager
+    def menuBarPopupPath(self, window: UIWindow, *path: str) -> Union[UIMenuBarItem, UIMenuItem]:
+        try:
+            menuBarItem = self._findFirstR(title=path[0], control_type=UIMenuBarItem)
+            if len(path) == 1:
+                yield menuBarItem
+            
+            with self.getPopupMenu(popup_naming_scheme="") as popup:
+                yield popup._nativeMenuBarItemFromPath(*path)
+        
+        except ElementNotFound:
+                    raise ElementNotFound(f"{path} is disabled or not available")

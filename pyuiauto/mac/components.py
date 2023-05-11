@@ -84,11 +84,19 @@ class UIBaseComponent(UIBaseComponentWrapper, metaclass=UIBaseComponentMeta):
     
     def right_click(self):
         self.component.clickMouseButtonRight(self.getMidpoint())
-    
+
+    def isTopLevel(self):
+        x, y, _, _= self.getCoordinates()
+        is_visible = self.component.getApplication().getElementAtPosition((x, y)) == self.component
+        return is_visible
+
     def isVisible(self):
         x, y, _, _= self.getCoordinates()
         is_visible = self.component.getApplication().getElementAtPosition((x, y)) == self.component
         return is_visible
+
+    def exists(self):
+        return hasattr(self.component, "AXRole")
     
     def getMidpoint(self):
         return ((self.component.AXPosition[0] + self.component.AXSize[0] / 2), (self.component.AXPosition[1] + self.component.AXSize[1] / 2))
@@ -252,7 +260,7 @@ class UIMenuItem(UIMenuItemWrapper, UIBaseComponent):
         return "AXMenuItem"
 
     def select(self):
-        self.invoke()
+        self.component.Press()
     
     def setValue(self, value):
         return super().setValue(value)
@@ -318,7 +326,7 @@ class UIMenuBar(UIMenuBarWrapper, UIBaseComponent):
     def native_control_type(cls) -> str:
         return "AXMenuBar"
 
-class UIProgressBar(UIBaseComponent, UIBaseComponent):
+class UIProgressBar(UIProgressBarWrapper, UIBaseComponent):
     @classmethod
     @property
     def native_control_type(cls) -> str:

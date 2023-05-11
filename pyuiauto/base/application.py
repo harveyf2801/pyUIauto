@@ -4,6 +4,12 @@ import time
 from abc import ABC, abstractmethod
 import logging
 import contextlib
+from typing import Union
+
+try:
+    from pyautogui import press
+except ImportError: # requires pip install
+        raise ModuleNotFoundError('To install the required modules use pip install pyautogui')
 
 # __MY_MODULES__
 from pyuiauto.components import UIWindow, UIButton, UIMenuItem, UIMenuBarItem
@@ -26,6 +32,7 @@ class UISystemTrayIconWrapper(ABC):
     @abstractmethod
     def __exit__(self, *args) -> None:
         'Using a context manager helps to dynamically tidy any open windows.'
+    
     
 class UIPopupMenuWrapper(ABC):
     '''UIPopupMenuWrapper\n
@@ -59,10 +66,11 @@ class UIPopupMenuWrapper(ABC):
     @abstractmethod
     def __enter__(self) -> UIPopupMenuWrapper:
         'Using a context manager helps to creates the popup windows dynamically.'
-        
+    
     @abstractmethod
     def __exit__(self, *args) -> None:
         'Using a context manager helps to dynamically tidy any open windows.'
+
 
 class UIApplicationWrapper(ABC):
     def __init__(self, appName: str, appPath: str = None) -> None:
@@ -143,7 +151,7 @@ class UIApplicationWrapper(ABC):
         Returns the popup menu component wrapper.\n
         (a context manager is required to interact with this component)\n
         Example:\n
-        with UIPopupMenu() as popup:
+        with UIPopupMenuWrapper() as popup:
             item = popup.getMenuItemFromPath("Setup", "Set Sample Rate", "96kHz")
             ...\n
         
@@ -153,33 +161,15 @@ class UIApplicationWrapper(ABC):
         - "Pop-up"
         '''
 
-    @contextlib.contextmanager
-    def systemTrayPopupPath(self, *path: str) -> UIMenuBarItem:
+    @abstractmethod
+    def systemTrayPopupPath(self, *path: str) -> UIMenuItem:
         '''Application class system tray popup select method\n
         This method selects menu items after clicking the system tray, from the *args passed in as a path.'''
-        with self.getSystemTrayIcon() as icon:
-            icon.right_click()
-            with self.getPopupMenu() as popup:
-                try:
-                    yield popup.getMenuItemFromPath(*path)
-                except ElementNotFound:
-                    raise ElementNotFound(f"{path} is disabled or not available")
     
-    @contextlib.contextmanager
-    def menuBarPopupPath(self, window: UIWindow, *path: str) -> UIMenuBarItem:
+    @abstractmethod
+    def menuBarPopupPath(self, window: UIWindow, *path: str) -> Union[UIMenuBarItem, UIMenuItem]:
         '''Application class menu bar select method\n
         This method selects menu items on the menubar from the *args passed in as a path.'''
-        try:
-            menuBarItem = window.findFirstR(title=path[0], control_type=UIMenuBarItem)
-            if len(path) == 1:
-                yield menuBarItem
-            
-            menuBarItem.click()
-            with self.getPopupMenu() as popup:
-                yield popup.getMenuItemFromPath(*path[1:])
-        
-        except ElementNotFound:
-                    raise ElementNotFound(f"{path} is disabled or not available")
 
     @abstractmethod
     def getCrashReport(self) -> str:
