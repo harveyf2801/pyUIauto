@@ -19,6 +19,7 @@ python = "^3.9"
 atomacos = {version = "^3.3.0", platform = "darwin"}
 pywinauto = {version = "^0.6.8", platform = "win32"}
 pyautogui = "0.9.41"
+importlib-metadata = "^6.6.0"
 
 [tool.poetry.dev-dependencies]
 pytest = "^5.2"

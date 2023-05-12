@@ -1,0 +1,129 @@
+name: Deployment (Test, Build and Publish a package to PIPY)
+
+on:
+  workflow_dispatch:
+    inputs:
+      version:
+        type: string
+        required: true
+      log:
+        type: string
+        required: true
+
+env:
+  RUNNER: 'windows-latest'
+  VERSION: ${{ inputs.version }}
+
+# if a new request comes through, cancel previous workflow and start again
+concurrency:
+  group: Deployment
+  cancel-in-progress: true
+
+jobs:
+
+  test:
+
+    strategy:
+      matrix:
+        os: [macos-latest, windows-latest]
+
+    name: Download Dependancies
+    environment: Deployment
+    runs-on: ${{ matrix.os }}
+    timeout-minutes: 10
+
+    defaults:
+      run:
+        shell: bash
+  
+  # Download dependencies
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v3
+        with:
+          ref: main
+      - run: git pull origin main
+
+      - name: Set up python
+        id: setup-python
+        uses: actions/setup-python@v4
+        with:
+          python-version: '3.9.13'
+
+      - name: Install Poetry
+        uses: snok/install-poetry@v1
+        with:
+          virtualenvs-create: true
+          virtualenvs-in-project: true
+
+      - name: Load cached venv
+        id: cached-pip-wheels
+        uses: actions/cache@v3
+        with:
+          path: ~/.cache
+          key: venv-${{ matrix.os }}-${{ steps.setup-python.outputs.python-version }}-${{ hashFiles('**/poetry.lock') }}
+
+      - name: Install dependencies
+        run: poetry install --no-interaction --no-root
+
+      - name: Install library
+        run: poetry install --no-interaction
+
+      - run: |
+          source $VENV
+          pytest --version
+  
+  # Test the package
+
+      - name: Run pytest suite
+        run: pytest tests/test_pyuiauto.py -vvv -s --log-cli-level=DEBUG -p no:faulthandler
+
+      
+  # Build the package
+  build:
+    name: Build Package
+    environment: Deployment
+    runs-on: $RUNNER
+    timeout-minutes: 5
+
+    defaults:
+      run:
+        shell: bash
+    
+    needs: test
+  
+    steps:
+      - name: Check version number
+        run: poetry run python -m version_check --version ${{ env.VERSION }}
+
+      - name: Update package version number
+        run: poetry version ${{ env.VERSION }}
+
+      - name: Build package and install
+        run: poetry build
+
+  publish:
+
+    name: Publish package
+    environment: Deployment
+    runs-on: $RUNNER
+    timeout-minutes: 10
+
+    defaults:
+      run:
+        shell: bash
+
+    needs: build
+    
+    steps:
+      - name: Install Twine
+        run: pip install twine
+      
+      - name: Check PYPI package
+        run: twine check dist/*
+        
+      - name: Publish
+        env:
+          TWINE_USERNAME: ${{ secrets.PYPI_USERNAME }}
+          TWINE_PASSWORD: ${{ secrets.PYPI_PASSWORD }}
+        run: twine install dist/*
