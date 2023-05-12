@@ -101,12 +101,23 @@ class UIBaseComponentWrapper(object, metaclass=UIBaseComponentWrapperMeta):
         '''Standard base class right click method\n
         Manually performs a mouse movement and right clicks the component at it's mid-point.'''
         raise NotImplementedError
+    
+    @abstractmethod
+    def isTopLevel(self) -> bool:
+        '''Standard base class is on top method\n
+        Compares the components position against the top most level (z-index) component at this position.'''
+        raise NotImplementedError
 
     @abstractmethod
     def isVisible(self) -> bool:
         '''Standard base class is visible method\n
-        Uses a combination of OS dependant accessibility API checks aswell as comparing the
-        components position against the top most level (z-index) component at this position.'''
+        Uses a OS dependant accessibility API checks.'''
+        raise NotImplementedError
+
+    @abstractmethod
+    def exists(self) -> bool:
+        '''Standard base class exists method\n
+        Uses a OS dependant accessibility API checks.'''
         raise NotImplementedError
     
     @abstractmethod

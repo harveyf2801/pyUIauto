@@ -75,8 +75,11 @@ app.terminateApp()
 ## Authors
 
 ex. Harvey Fretwell
+
 ex. [pyWinAuto](https://github.com/pywinauto/pywinauto/tree/master)
+
 ex. [atomacos](https://github.com/daveenguyen/atomacos)
+
 ex. [pyAutoGUI](https://github.com/asweigart/pyautogui)
 
 ## Version History
@@ -93,6 +96,10 @@ ex. [pyAutoGUI](https://github.com/asweigart/pyautogui)
     - Added isOnTop method for components
     - Fixed isVisible method for components
     - Added checks for components existing in helper methods
+  - 0.1.7
+    - Added MacOS compatibility
+    - Fixed getValue method for mac on menu items (with a bit of a work around ... hoping to find a better solution soon)
+    - Fixed menu path select and system tray popup select methods on mac
 
 ## Acknowledgments
 

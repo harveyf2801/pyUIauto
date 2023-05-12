@@ -93,6 +93,9 @@ class UIBaseComponent(UIBaseComponentWrapper, metaclass=UIBaseComponentMeta):
     def isVisible(self):
         return self.component.is_visible()
     
+    def exists(self):
+        raise self.isVisible()
+    
     def getMidpoint(self):
         return self.component.rectangle().mid_point()
     

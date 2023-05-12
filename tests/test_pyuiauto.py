@@ -6,8 +6,8 @@ from pyuiauto.application import UIApplication
 from pyuiauto.components import UIWindow, UIMenuBarItem
 from pyautogui import hotkey, write, press
 
-@pytest.mark.skipif(condition=(system() != "Windows"), reason="Skipping Windows tests")
-class TestWindows():
+@pytest.mark.skipif(condition=(system() != "Windows"), reason="Skipping Windows OS tests")
+class TestWindowsOS():
 
         @pytest.fixture(scope="session", autouse=True)
         def Application(self) -> UIApplication:
@@ -50,3 +50,19 @@ class TestWindows():
         @pytest.mark.xfail(reason="Not all UIComponents have been implemented yet")
         def test_components(self, MainWindow: UIWindow):
                 all_children = MainWindow.getChildren()
+
+
+@pytest.mark.skipif(condition=(system() != "Darwin"), reason="Skipping Mac OS tests")
+class TestMacOS():
+
+        @pytest.fixture(scope="session", autouse=True)
+        def Application(self) -> UIApplication:
+                app = UIApplication(appName="Notes", appPath="/System/Applications/Notes.app")
+                
+                if not app.isAppAlreadyRunning():
+                        app.launchApp()
+
+                app.connectApp()
+                assert app.isAppRunning(), "UIApplication failed to launch correctly"
+                yield app
+                app.terminateApp()

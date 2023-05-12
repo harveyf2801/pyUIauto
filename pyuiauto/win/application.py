@@ -4,6 +4,8 @@ from typing import Type
 import datetime
 import subprocess
 import logging
+import contextlib
+from typing import Union
 
 # pip installed modules
 try:
@@ -20,7 +22,7 @@ except ImportError: # requires pip install
 
 #___MY_MODULES___
 from pywinauto.controls.uiawrapper import UIAWrapper
-from pyuiauto.win.components import UIBaseComponent, UIWindow, UIButton, UIMenuItem
+from pyuiauto.win.components import UIBaseComponent, UIWindow, UIButton, UIMenuItem, UIMenuBarItem
 from pyuiauto.base.application import UIApplicationWrapper, UISystemTrayIconWrapper, UIPopupMenuWrapper
 from pyuiauto.exceptions import ElementNotFound, WindowNotFound
 
@@ -96,10 +98,11 @@ class UISystemTrayIcon(UISystemTrayIconWrapper):
         if self._iconHidden:
             self.__closeNotifictionExpand()
 
+
 class UIPopupMenu(UIPopupMenuWrapper):
-    def __init__(self, app: UIApplicationWrapper, popup_naming_scheme: str) -> None:
+    def __init__(self, app: UIApplicationWrapper, popup_naming_scheme: str = None) -> None:
         super().__init__(app, popup_naming_scheme)
-    
+
     def getMenuItemFromPath(self, *path: str) -> UIMenuItem:
         current_item = None
 
@@ -111,7 +114,7 @@ class UIPopupMenu(UIPopupMenuWrapper):
             self.steps += 1
         
         return current_item
-
+    
     def back(self):
         if self.steps > 0:
             press("left")
@@ -128,6 +131,7 @@ class UIPopupMenu(UIPopupMenuWrapper):
     def __exit__(self, *args) -> None:
         if self.current_popup.isVisible():
             press("esc")
+
 
 #___DEFINING_NATIVE_METHODS___
 class UIApplication(UIApplicationWrapper):
@@ -166,12 +170,6 @@ class UIApplication(UIApplicationWrapper):
 
     def isAppRunning(self):
         return self._app.is_process_running()
-
-    def getSystemTrayIcon(self) -> UISystemTrayIcon:
-        return UISystemTrayIcon(self)
-    
-    def getPopupMenu(self, popup_naming_scheme: str = None) -> UIPopupMenu:
-        return UIPopupMenu(self, popup_naming_scheme)
     
     def getCrashReport(self):
         # Convert epoch timestamp to a datetime object
@@ -189,3 +187,35 @@ class UIApplication(UIApplicationWrapper):
             return result.stdout
         else:
             return result.stderr
+    
+    def getPopupMenu(self, popup_naming_scheme: str = None) -> UIPopupMenu:
+        return UIPopupMenu(self, popup_naming_scheme)
+    
+    def getSystemTrayIcon(self) -> UISystemTrayIcon:
+        return UISystemTrayIcon(self)
+
+    @contextlib.contextmanager
+    def systemTrayPopupPath(self, *path: str) -> UIMenuItem:
+        with self.getSystemTrayIcon() as icon:
+            icon.right_click()
+        
+            with self.getPopupMenu() as popup:
+                try:
+
+                    yield popup.getMenuItemFromPath(*path)
+                except ElementNotFound:
+                    raise ElementNotFound(f"{path} is disabled or not available")
+    
+    @contextlib.contextmanager
+    def menuBarPopupPath(self, window: UIWindow, *path: str) -> Union[UIMenuBarItem, UIMenuItem]:
+        try:
+            menuBarItem = window.findFirstR(title=path[0], control_type=UIMenuBarItem)
+            if len(path) == 1:
+                yield menuBarItem
+            
+            menuBarItem.click()
+            with self.getPopupMenu() as popup:
+                yield popup.getMenuItemFromPath(*path[1:])
+        
+        except ElementNotFound:
+                    raise ElementNotFound(f"{path} is disabled or not available")
