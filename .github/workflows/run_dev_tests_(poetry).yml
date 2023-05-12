@@ -32,8 +32,8 @@ jobs:
       - name: Check out repository
         uses: actions/checkout@v3
         with:
-          ref: develop
-      - run: git pull origin develop
+          ref: main
+      - run: git pull origin main
 
       - name: Set up python
         id: setup-python

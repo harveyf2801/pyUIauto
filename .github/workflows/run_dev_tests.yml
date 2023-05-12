@@ -32,8 +32,8 @@ jobs:
       - name: Check out repository
         uses: actions/checkout@v3
         with:
-          ref: develop
-      - run: git pull origin develop
+          ref: main
+      - run: git pull origin main
 
       - name: Set up python
         id: setup-python
@@ -45,7 +45,7 @@ jobs:
         run: pip install wheel
 
       - name: Install pyuiauto wheel
-        run: pip install dist/pyUIauto-0.1.0-py3-none-any.whl
+        run: pip install dist/*.whl
       
       - name: Install pytest
         run: |
