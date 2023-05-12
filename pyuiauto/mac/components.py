@@ -259,6 +259,9 @@ class UIMenuItem(UIMenuItemWrapper, UIBaseComponent):
     def native_control_type(cls) -> str:
         return "AXMenuItem"
 
+    def getValue(self) -> bool:
+        return self.component.AXMenuItemMarkChar != None
+
     def select(self):
         self.component.Press()
     

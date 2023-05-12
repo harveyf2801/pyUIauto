@@ -52,13 +52,8 @@ class UIPopupMenu(UIPopupMenuWrapper):
         return current_item
     
     def _nativeMenuBarItemFromPath(self, *path: str) -> UIMenuBarItem:
-        current_item = None
-
-        for count, i in enumerate(path):
-            current_item = UIMenuItem(self.app._app.menuItem(*path[:count+1]))
-            if count != len(path)-1:
-                current_item.invoke()
-            self.steps += 1
+        current_item = UIMenuItem(self.app._app.menuItem(*path))
+        self.steps = len(path)
         
         return current_item
         
