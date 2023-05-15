@@ -11,7 +11,7 @@ class TestWindowsOS():
 
         @pytest.fixture(scope="session", autouse=True)
         def Application(self) -> UIApplication:
-                app = UIApplication(appName="Notepad", appPath="Notepad.exe")
+                app = UIApplication(appName=r"notepad", appPath=r"notepad.exe")
                 
                 if not app.isAppAlreadyRunning():
                         app.launchApp()
@@ -23,7 +23,7 @@ class TestWindowsOS():
 
         @pytest.fixture(scope="session", autouse=True)
         def MainWindow(self, Application: UIApplication):
-                main_window = Application.window(title="Notepad", timeout=2) # getting all windows (with no criteria) and selecting the first one
+                main_window = Application.window(title_re=".*Notepad", timeout=2) # getting all windows (with no criteria) and selecting the first one
                 main_window.setFocus()
                 assert main_window.isVisible(), "UIWindow.setFocus() failed"
 
@@ -66,3 +66,6 @@ class TestMacOS():
                 assert app.isAppRunning(), "UIApplication failed to launch correctly"
                 yield app
                 app.terminateApp()
+
+        def test_1(self, Application: UIApplication):
+                assert True
