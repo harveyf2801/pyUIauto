@@ -140,7 +140,7 @@ class UIApplication(UIApplicationWrapper):
         pywinauto.Application().start(self.appPath)
     
     def connectApp(self) -> None:
-        self._app = pywinauto.Application(backend="uia", allow_magic_lookup=False).connect(title=self.appName, path=f"{self.appName}.exe")
+        self._app = pywinauto.Application(backend="uia", allow_magic_lookup=False).connect(title=self.appName, path=self.appPath)
     
     def terminateApp(self) -> None:
         self._app.kill()
