@@ -54,7 +54,7 @@ class UISystemTrayIcon(UISystemTrayIconWrapper):
                 self._iconHidden = True
     
     def _getIcon(self, parent: pywinauto.WindowSpecification) -> UIButton:
-        icon = parent.child_window(title_re=f".* {self.app.appName}", control_type="Button", found_index=0)
+        icon = parent.child_window(title_re=f".*{self.app.appName}", control_type="Button", class_name="SystemTray.NormalButton", found_index=0)
         icon.wait('exists', timeout=2)
         icon.wrapper_object()
         return UIButton(icon)
