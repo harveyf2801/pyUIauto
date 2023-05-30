@@ -317,7 +317,7 @@ class UIProgressBar(UIProgressBarWrapper, UIBaseComponent):
         return "ProgressBar"
 
     def getValue(self) -> float:
-        return round(float(self.component.legacy_properties()['Value']), 2)
+        return float(self.component.legacy_properties()['Value'])
 
 # !!! Mac Specific !!!
 
