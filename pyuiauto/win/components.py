@@ -68,8 +68,6 @@ class UIBaseComponent(UIBaseComponentWrapper, metaclass=UIBaseComponentMeta):
     def __init__(self, component: UIAWrapper):
         UIBaseComponentWrapper.__init__(self, component)
 
-        self.component: UIAWrapper
-
     def getValue(self):
         return self.component.iface_value
     
@@ -318,8 +316,8 @@ class UIProgressBar(UIProgressBarWrapper, UIBaseComponent):
     def native_control_type(cls) -> str:
         return "ProgressBar"
 
-    def getValue(self):
-        return int(self.component.legacy_properties()['Value'])
+    def getValue(self) -> float:
+        return round(float(self.component.legacy_properties()['Value']), 2)
 
 # !!! Mac Specific !!!
 
