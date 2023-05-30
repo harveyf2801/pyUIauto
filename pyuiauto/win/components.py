@@ -68,6 +68,8 @@ class UIBaseComponent(UIBaseComponentWrapper, metaclass=UIBaseComponentMeta):
     def __init__(self, component: UIAWrapper):
         UIBaseComponentWrapper.__init__(self, component)
 
+        self.component: UIAWrapper
+
     def getValue(self):
         return self.component.iface_value
     

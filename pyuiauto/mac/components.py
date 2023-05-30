@@ -67,6 +67,8 @@ class UIBaseComponent(UIBaseComponentWrapper, metaclass=UIBaseComponentMeta):
     def __init__(self, component: NativeUIElement):
         UIBaseComponentWrapper.__init__(self, component)
 
+        self.component: NativeUIElement
+
     def getValue(self):
         return self.component.AXValue
     
