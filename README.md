@@ -100,6 +100,12 @@ ex. [pyAutoGUI](https://github.com/asweigart/pyautogui)
     - Added MacOS compatibility
     - Fixed getValue method for mac on menu items (with a bit of a work around ... hoping to find a better solution soon)
     - Fixed menu path select and system tray popup select methods on mac
+  - 0.1.8
+    - Fixed progress bar get value method
+    - Added better python intellisense for pylance
+    - Added further checks for system tray icon
+    - Updated application.py
+    - Upgraded package versions
 
 ## Acknowledgments
 
