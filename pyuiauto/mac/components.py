@@ -73,7 +73,8 @@ class UIBaseComponent(UIBaseComponentWrapper, metaclass=UIBaseComponentMeta):
         return self.component.AXValue
     
     def setValue(self, value):
-        self.component.AXValue = value
+        self.component.setString("AXValue", value)
+        # self.component.AXValue = value
     
     def setFocus(self):
         self.component.activate()
