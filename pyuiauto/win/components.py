@@ -192,6 +192,12 @@ class UIButton(UIButtonWrapper, UIBaseComponent):
     def setValue(self, value):
         return super().setValue(value)
 
+class UICheckBox(UICheckBoxWrapper, UIBaseComponent):
+    @classmethod
+    @property
+    def native_control_type(cls) -> str:
+        return "CheckBox"
+    
 class UIRadioButton(UIRadioButtonWrapper, UIBaseComponent):
     @classmethod
     @property

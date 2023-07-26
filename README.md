@@ -106,6 +106,8 @@ ex. [pyAutoGUI](https://github.com/asweigart/pyautogui)
     - Added further checks for system tray icon
     - Updated application.py
     - Upgraded package versions
+  - 0.1.9
+    - Added CheckBox component
 
 ## Acknowledgments
 
