@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "pyUIauto"
-version = "0.1.7"
+version = "0.1.9"
 description = "Python UI Automation library, for cross-platform applications, interfacing through the accessibility API"
 authors = ["Harvey Fretwell <hgfretwell@gmail.com>"]
 maintainers = ["Harvey Fretwell <hgfretwell@gmail.com>"]

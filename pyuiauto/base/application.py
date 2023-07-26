@@ -180,7 +180,7 @@ class UIApplicationWrapper(ABC):
         '''Application class relaunch app method\n
         Uses it's context manager __enter__ __exit__ methods to quit and reopen the application.'''
         self.__exit__()
-        self.launchApp()
+        time.sleep(0.5)
         self.__enter__()
 
     def __enter__(self) -> UIApplicationWrapper:

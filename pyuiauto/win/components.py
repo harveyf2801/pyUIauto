@@ -192,6 +192,12 @@ class UIButton(UIButtonWrapper, UIBaseComponent):
     def setValue(self, value):
         return super().setValue(value)
 
+class UICheckBox(UICheckBoxWrapper, UIBaseComponent):
+    @classmethod
+    @property
+    def native_control_type(cls) -> str:
+        return "CheckBox"
+    
 class UIRadioButton(UIRadioButtonWrapper, UIBaseComponent):
     @classmethod
     @property
@@ -316,8 +322,8 @@ class UIProgressBar(UIProgressBarWrapper, UIBaseComponent):
     def native_control_type(cls) -> str:
         return "ProgressBar"
 
-    def getValue(self):
-        return int(self.component.legacy_properties()['Value'])
+    def getValue(self) -> float:
+        return float(self.component.legacy_properties()['Value'])
 
 # !!! Mac Specific !!!
 

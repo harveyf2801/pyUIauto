@@ -1,7 +1,5 @@
 # pyUIauto
 
-[![macOS](https://svgshare.com/i/ZjP.svg)](https://svgshare.com/i/ZjP.svg)
-[![Windows](https://svgshare.com/i/ZhY.svg)](https://svgshare.com/i/ZhY.svg)
 [![PyPi version](https://badgen.net/pypi/v/pyuiauto/)](https://pypi.org/project/pyuiauto/)
 [![PyPi license](https://badgen.net/pypi/license/pyuiauto/)](https://pypi.org/project/pyuiauto/)
 [![PyPI pyversions](https://img.shields.io/pypi/pyversions/pyuiauto.svg)](https://pypi.python.org/pypi/pyuiauto/)
@@ -100,6 +98,14 @@ ex. [pyAutoGUI](https://github.com/asweigart/pyautogui)
     - Added MacOS compatibility
     - Fixed getValue method for mac on menu items (with a bit of a work around ... hoping to find a better solution soon)
     - Fixed menu path select and system tray popup select methods on mac
+  - 0.1.8
+    - Fixed progress bar get value method
+    - Added better python intellisense for pylance
+    - Added further checks for system tray icon
+    - Updated application.py
+    - Upgraded package versions
+  - 0.1.9
+    - Added CheckBox component
 
 ## Acknowledgments
 

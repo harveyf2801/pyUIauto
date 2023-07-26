@@ -67,11 +67,14 @@ class UIBaseComponent(UIBaseComponentWrapper, metaclass=UIBaseComponentMeta):
     def __init__(self, component: NativeUIElement):
         UIBaseComponentWrapper.__init__(self, component)
 
+        self.component: NativeUIElement
+
     def getValue(self):
         return self.component.AXValue
     
     def setValue(self, value):
-        self.component.AXValue = value
+        self.component.setString("AXValue", value)
+        # self.component.AXValue = value
     
     def setFocus(self):
         self.component.activate()
@@ -223,6 +226,12 @@ class UIButton(UIButtonWrapper, UIBaseComponent):
     def setValue(self, value):
         return super().setValue(value)
 
+class UICheckBox(UICheckBoxWrapper, UIBaseComponent):
+    @classmethod
+    @property
+    def native_control_type(cls) -> str:
+        return "AXCheckBox"
+    
 class UIRadioButton(UIRadioButtonWrapper, UIBaseComponent):
     @classmethod
     @property
