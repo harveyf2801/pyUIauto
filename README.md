@@ -5,16 +5,18 @@
 [![PyPI pyversions](https://img.shields.io/pypi/pyversions/pyuiauto.svg)](https://pypi.python.org/pypi/pyuiauto/)
 
 
-| Tests       | Status                                                                                                                  |
+<!--| Tests       | Status                                                                                                                  |
 | :---------- | :---------------------------------------------------------------------------------------------------------------------: |
 | Development | ![Development Tests](https://github.com/harveyf2801/pyUIauto/actions/workflows/run_dev_tests.yml/badge.svg?branch=main)       |
-| Build       | ![Build Tests](https://github.com/harveyf2801/pyUIauto/actions/workflows/build_wheel.yml/badge.svg?branch=main) |
+| Build       | ![Build Tests](https://github.com/harveyf2801/pyUIauto/actions/workflows/build_wheel.yml/badge.svg?branch=main) |-->
 
 Python UI Automation library, for cross-platform applications, interfacing through the accessibility API.
 
 ## Description
 
 This library / framework takes two popular UI automation libraries and combines their functionality by wrapping them into custom components and creating methods that function in similar ways for both OS. This project was originally designed as part of a QA automation project to perform end-to-end testing on desktop applications.
+
+> ⤴️: **Open source**: This project is open source and welcomes any pull requests and further improvements!
 
 ## Getting Started
 
