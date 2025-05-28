@@ -108,6 +108,11 @@ ex. [pyAutoGUI](https://github.com/asweigart/pyautogui)
     - Upgraded package versions
   - 0.1.9
     - Added CheckBox component
+  - 0.1.10
+    - Added popup button for MacOS
+  - 0.1.11
+    - Fixed `getChildren`
+    - Fixed popup menu navigation
 
 ## Acknowledgments
 

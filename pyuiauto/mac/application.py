@@ -45,7 +45,7 @@ class UIPopupMenu(UIPopupMenuWrapper):
         for count, i in enumerate(path):
             self.current_popup = self.app.window(title=self.win_name)
             current_item = self.current_popup.findFirstR(title=i, control_type=UIMenuItem)
-            if count != len(path)-1:
+            if count == len(path)-1:
                 current_item.invoke()
             self.steps += 1
         

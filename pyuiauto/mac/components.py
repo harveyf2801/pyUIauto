@@ -113,7 +113,7 @@ class UIBaseComponent(UIBaseComponentWrapper, metaclass=UIBaseComponentMeta):
         return self.component.AXSize
     
     def getChildren(self):
-        return list(UIBaseComponent(component, component.AXRole) for component in self.component.AXChildren)
+        return list(UIBaseComponent(component) for component in self.component.AXChildren)
     
     getDescendants = getChildren
     
@@ -351,3 +351,9 @@ class UIMenuBarItem(UIMenuItemWrapper, UIBaseComponent):
     @property
     def native_control_type(cls) -> str:
         return "AXMenuBarItem"
+
+class UIPopUpButton(UIButtonWrapper, UIBaseComponent):
+    @classmethod
+    @property
+    def native_control_type(cls) -> str:
+        return "AXPopUpButton"
