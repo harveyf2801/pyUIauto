@@ -113,6 +113,8 @@ ex. [pyAutoGUI](https://github.com/asweigart/pyautogui)
   - 0.1.11
     - Fixed `getChildren`
     - Fixed popup menu navigation
+  - 0.1.12
+    - Fixed Windows UIRadioButton `getValue`
 
 ## Acknowledgments
 

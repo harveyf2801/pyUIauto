@@ -203,6 +203,9 @@ class UIRadioButton(UIRadioButtonWrapper, UIBaseComponent):
     @property
     def native_control_type(cls) -> str:
         return "RadioButton"
+    
+    def getValue(self):
+        return self.component.get_toggle_state()
 
 class UIText(UITextWrapper, UIBaseComponent):
     @classmethod
